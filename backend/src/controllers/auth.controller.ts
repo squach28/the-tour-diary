@@ -116,7 +116,7 @@ export const refresh = (req: express.Request, res: express.Response) => {
       sameSite: "strict",
       maxAge: 900000,
     });
-    res.status(200).json({ message: "hello" });
+    res.status(200).json({ message: "Success" });
   } catch (e) {
     console.log(e);
     res.status(500).json({ message: "Something went wrong" });
