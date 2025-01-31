@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { db } from "../db/db";
 import { queries as authQueries } from "../db/queries/auth";
 import { queries as userQueries } from "../db/queries/users";
+import { generateJWT } from "../utils/jwt";
 
 export const signup = async (req: express.Request, res: express.Response) => {
   const client = await db.connect();
@@ -55,14 +56,14 @@ export const login = async (req: express.Request, res: express.Response) => {
     return;
   }
   try {
-    const result = await db.query(authQueries.getPasswordHashByEmail, [email]);
+    const result = await db.query(authQueries.getCredentialsByEmail, [email]);
     if (result.rows.length === 0) {
       res
         .status(400)
         .json({ message: `User with email, ${email}, doesn't exist` });
       return;
     }
-    const { hash } = result.rows[0];
+    const { id, hash } = result.rows[0];
     const isPasswordCorrect = await bcrypt.compare(password, hash);
     if (!isPasswordCorrect) {
       res.status(400).json({ message: "Incorrect password" });
