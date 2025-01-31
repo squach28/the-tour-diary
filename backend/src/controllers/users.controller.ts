@@ -1,6 +1,7 @@
 import express from "express";
 import { db } from "../db/db";
 import { queries as userQueries } from "../db/queries/users";
+import { queries as authQueries } from "../db/queries/auth";
 import validator from "validator";
 
 export const getUserById = async (
@@ -85,11 +86,37 @@ export const updateUserById = async (
   }
 };
 
-export const deleteUserById = (req: express.Request, res: express.Response) => {
+export const deleteUserById = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const client = await db.connect();
   try {
+    const { id } = req.params;
+    if (id === undefined) {
+      res.status(400).json({ message: "ID is missing" });
+      return;
+    }
+
+    if (!validator.isUUID(id)) {
+      res.status(400).json({ message: "ID is not a valid UUID" });
+      return;
+    }
+
+    const result = await client.query(authQueries.deleteUserById, [id]);
+    if (result.rowCount === 0) {
+      res.status(404).json({ message: "User with ID doesn't exist" });
+      return;
+    }
+    await client.query("COMMIT");
+    res.status(204).send();
+    return;
   } catch (e) {
     console.log(e);
+    await client.query("ROLLBACK");
     res.status(500).json({ message: "Something went wrong" });
     return;
+  } finally {
+    client.release();
   }
 };

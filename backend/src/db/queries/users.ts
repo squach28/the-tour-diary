@@ -4,5 +4,4 @@ export const queries = {
   getUserById: "SELECT * FROM users WHERE id = $1",
   updateUserById:
     "UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE id = $4 RETURNING *",
-  deleteUserById: "DELETE FROM users WHERE id = $1",
 };
