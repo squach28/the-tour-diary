@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { db } from "../db/db";
 import { queries as authQueries } from "../db/queries/auth";
 import { queries as userQueries } from "../db/queries/users";
-import { generateJWT } from "../utils/jwt";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 
 export const signup = async (req: express.Request, res: express.Response) => {
   const client = await db.connect();
@@ -74,12 +74,19 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     const { id } = result.rows[0];
 
-    const token = await generateJWT(id);
+    const accessToken = generateAccessToken(id);
+    const refreshToken = generateRefreshToken(id);
 
-    res.cookie("jwt", token, {
+    res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "strict",
       maxAge: 3600000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.status(200).json({ message: "Success" });
     return;
