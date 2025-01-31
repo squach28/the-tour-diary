@@ -63,12 +63,24 @@ export const login = async (req: express.Request, res: express.Response) => {
         .json({ message: `User with email, ${email}, doesn't exist` });
       return;
     }
-    const { id, hash } = result.rows[0];
+
+    const { hash } = result.rows[0];
     const isPasswordCorrect = await bcrypt.compare(password, hash);
+
     if (!isPasswordCorrect) {
       res.status(400).json({ message: "Incorrect password" });
       return;
     }
+
+    const { id } = result.rows[0];
+
+    const token = await generateJWT(id);
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 3600000,
+    });
     res.status(200).json({ message: "Success" });
     return;
   } catch (e) {
