@@ -3,6 +3,11 @@ import bcrypt from "bcrypt";
 import { db } from "../db/db";
 import { queries as authQueries } from "../db/queries/auth";
 import { queries as userQueries } from "../db/queries/users";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} from "../utils/jwt";
 
 export const signup = async (req: express.Request, res: express.Response) => {
   const client = await db.connect();
@@ -55,24 +60,66 @@ export const login = async (req: express.Request, res: express.Response) => {
     return;
   }
   try {
-    const result = await db.query(authQueries.getPasswordHashByEmail, [email]);
+    const result = await db.query(authQueries.getCredentialsByEmail, [email]);
     if (result.rows.length === 0) {
       res
         .status(400)
         .json({ message: `User with email, ${email}, doesn't exist` });
       return;
     }
+
     const { hash } = result.rows[0];
     const isPasswordCorrect = await bcrypt.compare(password, hash);
+
     if (!isPasswordCorrect) {
       res.status(400).json({ message: "Incorrect password" });
       return;
     }
+
+    const { id } = result.rows[0];
+
+    const accessToken = generateAccessToken(id);
+    const refreshToken = generateRefreshToken(id);
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 900000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.status(200).json({ message: "Success" });
     return;
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: "Field missing" });
+    return;
+  }
+};
+
+export const refresh = (req: express.Request, res: express.Response) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (token === undefined) {
+      res.status(403).json({ message: "Refresh token is missing" });
+      return;
+    }
+
+    const decoded = verifyRefreshToken(token);
+    const newAccessToken = generateAccessToken(decoded.id);
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 900000,
+    });
+    res.status(200).json({ message: "Success" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
     return;
   }
 };
