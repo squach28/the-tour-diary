@@ -8,7 +8,7 @@ export const generateAccessToken = (id: string) => {
 };
 
 export const verifyAccessToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
+  return jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 };
 
 export const generateRefreshToken = (id: string) => {

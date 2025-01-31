@@ -1,3 +1,4 @@
+import { tokenMiddleware } from "../middleware/jwtMiddleware";
 import {
   deleteUserById,
   getUserById,
@@ -8,5 +9,5 @@ import express from "express";
 export const usersRouter = express.Router();
 
 usersRouter.get("/:id", getUserById);
-usersRouter.put("/:id", updateUserById);
-usersRouter.delete("/:id", deleteUserById);
+usersRouter.put("/:id", tokenMiddleware, updateUserById);
+usersRouter.delete("/:id", tokenMiddleware, deleteUserById);
