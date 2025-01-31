@@ -48,4 +48,31 @@ export const signup = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const login = (req: express.Request, res: express.Response) => {};
+export const login = async (req: express.Request, res: express.Response) => {
+  const { email, password } = req.body;
+  if (email === undefined || password === undefined) {
+    res.status(400).json({ mesasage: "Missing email or password" });
+    return;
+  }
+  try {
+    const result = await db.query(authQueries.getPasswordHashByEmail, [email]);
+    if (result.rows.length === 0) {
+      res
+        .status(400)
+        .json({ message: `User with email, ${email}, doesn't exist` });
+      return;
+    }
+    const { hash } = result.rows[0];
+    const isPasswordCorrect = await bcrypt.compare(password, hash);
+    if (!isPasswordCorrect) {
+      res.status(400).json({ message: "Incorrect password" });
+      return;
+    }
+    res.status(200).json({ message: "Success" });
+    return;
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ message: "Field missing" });
+    return;
+  }
+};
