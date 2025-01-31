@@ -72,7 +72,7 @@ export const updateUserById = async (
       res.status(404).json({ message: "User with ID doesn't exist" });
       return;
     }
-
+    await client.query("COMMIT");
     res.status(201).json(result.rows[0]);
     return;
   } catch (e) {
