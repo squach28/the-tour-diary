@@ -3,7 +3,11 @@ import bcrypt from "bcrypt";
 import { db } from "../db/db";
 import { queries as authQueries } from "../db/queries/auth";
 import { queries as userQueries } from "../db/queries/users";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} from "../utils/jwt";
 
 export const signup = async (req: express.Request, res: express.Response) => {
   const client = await db.connect();
@@ -80,7 +84,7 @@ export const login = async (req: express.Request, res: express.Response) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "strict",
-      maxAge: 3600000,
+      maxAge: 900000,
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -93,6 +97,29 @@ export const login = async (req: express.Request, res: express.Response) => {
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: "Field missing" });
+    return;
+  }
+};
+
+export const refresh = (req: express.Request, res: express.Response) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (token === undefined) {
+      res.status(403).json({ message: "Refresh token is missing" });
+      return;
+    }
+
+    const decoded = verifyRefreshToken(token);
+    const newAccessToken = generateAccessToken(decoded.id);
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 900000,
+    });
+    res.status(200).json({ message: "hello" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
     return;
   }
 };
