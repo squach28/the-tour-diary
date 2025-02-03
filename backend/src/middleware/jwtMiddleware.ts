@@ -30,5 +30,6 @@ export const tokenMiddleware = (
     next();
   } catch (e) {
     res.status(401).json({ message: "Invalid token" });
+    return;
   }
 };
