@@ -4,6 +4,7 @@ import Layout from "./layouts/Layout";
 import AuthLayout from "./layouts/auth/AuthLayout";
 import LoginForm from "./components/auth/LoginForm";
 import SignupForm from "./components/auth/SignupForm";
+import ResetPassword from "./components/auth/ResetPassword";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Route path="/auth" element={<AuthLayout />}>
         <Route path="login" element={<LoginForm />}></Route>
         <Route path="signup" element={<SignupForm />}></Route>
+        <Route path="resetPassword" element={<ResetPassword />}></Route>
       </Route>
     </Routes>
   );
