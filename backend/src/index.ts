@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { authRouter } from "./routes/auth.route";
 import { usersRouter } from "./routes/users.route";
+import { concertsRouter } from "./routes/concerts.route";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +15,7 @@ app.use(cookieParser());
 
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
+app.use("", concertsRouter);
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
