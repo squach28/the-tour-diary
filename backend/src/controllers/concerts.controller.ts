@@ -1,6 +1,7 @@
 import express from "express";
 import { queries as concertQueries } from "../db/queries/concerts";
 import { db } from "../db/db";
+import { fetchConcertById } from "../utils/setlist";
 
 export const addConcert = async (
   req: express.Request,
@@ -55,5 +56,27 @@ export const removeConcert = async (
     return;
   } finally {
     client.release();
+  }
+};
+
+export const getConcertById = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { concertId } = req.params;
+
+    if (concertId === undefined) {
+      res.status(400).json({ message: "Missing concertId" });
+      return;
+    }
+
+    const concert = await fetchConcertById(concertId);
+    res.status(200).json(concert);
+    return;
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+    return;
   }
 };

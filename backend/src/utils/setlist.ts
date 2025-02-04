@@ -19,3 +19,19 @@ export const getArtistsByName = async (
     return null;
   }
 };
+
+export const fetchConcertById = async (
+  concertId: string
+): Promise<Concert | null> => {
+  try {
+    const result = await axios.get(`${SETLIST_API_URL}/setlist/${concertId}`, {
+      headers: {
+        Accept: "application/json",
+        "x-api-key": process.env.SETLIST_API_KEY,
+      },
+    });
+    return result.data;
+  } catch (e) {
+    return null;
+  }
+};
