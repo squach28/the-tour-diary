@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 
 type FormData = {
   firstName: string;
@@ -9,6 +10,13 @@ type FormData = {
   email: string;
   password: string;
   confirmPassword: string;
+};
+
+type UserData = {
+  firstName: String;
+  lastName: string;
+  email: string;
+  password: string;
 };
 
 const SignupForm = () => {
@@ -29,8 +37,32 @@ const SignupForm = () => {
       path: ["confirmPassword"],
     });
 
-  const submitForm = (data: FormData) => {
-    console.log(data);
+  const submitForm = async (data: FormData) => {
+    const userData: UserData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      await signUp(userData);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const signUp = async (data: UserData) => {
+    try {
+      const result = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/signup`,
+        data
+      );
+      console.log(result);
+      return result;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   };
 
   const {
