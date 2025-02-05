@@ -68,7 +68,7 @@ const SignupForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -164,7 +164,11 @@ const SignupForm = () => {
           </p>
         ) : null}
       </div>
-      <button className="bg-blue-500 text-white p-2 rounded-md" type="submit">
+      <button
+        className="bg-blue-500 text-white p-2 rounded-md"
+        type="submit"
+        disabled={isSubmitting}
+      >
         Sign up
       </button>
       <p className="text-center">
