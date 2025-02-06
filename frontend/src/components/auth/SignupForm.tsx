@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useState } from "react";
 
 type FormData = {
@@ -59,7 +59,6 @@ const SignupForm = () => {
         `${import.meta.env.VITE_API_URL}/auth/signup`,
         data
       );
-      console.log(result);
       return result;
     } catch (e) {
       if (axios.isAxiosError(e)) {
@@ -81,7 +80,7 @@ const SignupForm = () => {
 
   return (
     <form
-      className="flex flex-col pt-16 px-12 gap-4"
+      className="flex flex-col pt-16 pb-6 px-12 gap-4"
       onSubmit={handleSubmit(submitForm)}
     >
       <h1 className="text-2xl">Welcome!</h1>
