@@ -6,6 +6,7 @@ import { queries as userQueries } from "../db/queries/users";
 import {
   generateAccessToken,
   generateRefreshToken,
+  verifyAccessToken,
   verifyRefreshToken,
 } from "../utils/jwt";
 
@@ -111,6 +112,24 @@ export const login = async (req: express.Request, res: express.Response) => {
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: "Field missing" });
+    return;
+  }
+};
+
+export const checkAuth = (req: express.Request, res: express.Response) => {
+  try {
+    const token = req.cookies.accessToken;
+    if (token === undefined) {
+      res.status(401).json({ message: "Not authenticated" });
+      return;
+    }
+
+    const decoded = verifyAccessToken(token);
+    res.status(200).json({ id: decoded.id });
+    return;
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
     return;
   }
 };
