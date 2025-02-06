@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +22,7 @@ type UserData = {
 
 const SignupForm = () => {
   const [error, setError] = useState<string | null>(null); // represents an error from server
+  const navigate = useNavigate();
   const schema: ZodType<FormData> = z
     .object({
       firstName: z.string().nonempty({ message: "First name is required" }),
@@ -48,6 +49,7 @@ const SignupForm = () => {
     };
     try {
       await signUp(userData);
+      navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
     }
@@ -57,7 +59,10 @@ const SignupForm = () => {
     try {
       const result = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/signup`,
-        data
+        data,
+        {
+          withCredentials: true,
+        }
       );
       return result;
     } catch (e) {
