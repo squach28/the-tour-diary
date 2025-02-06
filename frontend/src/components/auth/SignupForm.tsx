@@ -92,7 +92,9 @@ const SignupForm = () => {
         <input
           {...register("firstName")}
           id="firstName"
-          className="w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0"
+          className={`w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0 ${
+            errors.firstName ? "border-red-400" : ""
+          }`}
           type="text"
           placeholder="Enter your first name"
         />
@@ -109,7 +111,9 @@ const SignupForm = () => {
         <input
           {...register("lastName")}
           id="lastName"
-          className="w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0"
+          className={`w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0 ${
+            errors.lastName ? "border-red-400" : ""
+          }`}
           type="text"
           placeholder="Enter your last name"
         />
@@ -126,7 +130,9 @@ const SignupForm = () => {
         <input
           {...register("email")}
           id="email"
-          className="w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0"
+          className={`w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0 ${
+            errors.email ? "border-red-400" : ""
+          }`}
           type="email"
           placeholder="Enter your email"
         />
@@ -143,7 +149,9 @@ const SignupForm = () => {
         <input
           {...register("password")}
           id="password"
-          className="w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0"
+          className={`w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0 ${
+            errors.password ? "border-red-400" : ""
+          }`}
           type="password"
           placeholder="Enter your password"
         />
@@ -160,7 +168,9 @@ const SignupForm = () => {
         <input
           {...register("confirmPassword")}
           id="confirmPassword"
-          className="w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0"
+          className={`w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0 ${
+            errors.confirmPassword ? "border-red-400" : ""
+          }`}
           type="password"
           placeholder="Confirm your password"
         />
