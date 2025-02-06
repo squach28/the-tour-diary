@@ -2,7 +2,8 @@ import { Link } from "react-router";
 import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { useState } from "react";
 
 type FormData = {
   firstName: string;
@@ -20,6 +21,7 @@ type UserData = {
 };
 
 const SignupForm = () => {
+  const [error, setError] = useState<string | null>(null); // represents an error from server
   const schema: ZodType<FormData> = z
     .object({
       firstName: z.string().nonempty({ message: "First name is required" }),
@@ -60,7 +62,11 @@ const SignupForm = () => {
       console.log(result);
       return result;
     } catch (e) {
-      console.log(e);
+      if (axios.isAxiosError(e)) {
+        if (e.response) {
+          setError(e.response.data.message);
+        }
+      }
       return null;
     }
   };
@@ -164,6 +170,9 @@ const SignupForm = () => {
           </p>
         ) : null}
       </div>
+      {error ? (
+        <p className="mt-1 text-red-500 font-bold text-sm">{error}</p>
+      ) : null}
       <button
         className="bg-blue-500 text-white p-2 rounded-md"
         type="submit"
