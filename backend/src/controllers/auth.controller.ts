@@ -43,7 +43,21 @@ export const signup = async (req: express.Request, res: express.Response) => {
       email,
     ]);
     await client.query("COMMIT");
-    res.status(200).json({ message: "User was sucessfully created" });
+    const accessToken = generateAccessToken(id);
+    const refreshToken = generateRefreshToken(id);
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 900000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.status(201).json({ message: "User was sucessfully created" });
+    return;
   } catch (e) {
     console.log(e);
     await client.query("ROLLBACK");
