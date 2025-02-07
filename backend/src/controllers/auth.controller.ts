@@ -103,6 +103,18 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
 };
 
+export const logout = (req: express.Request, res: express.Response) => {
+  try {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.status(200).json({ message: "Success" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  }
+};
+
 export const checkAuth = (req: express.Request, res: express.Response) => {
   try {
     const token = req.cookies.accessToken;
