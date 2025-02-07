@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 type FormData = {
   firstName: string;
@@ -23,6 +24,8 @@ type UserData = {
 const SignupForm = () => {
   const [error, setError] = useState<string | null>(null); // represents an error from server
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const schema: ZodType<FormData> = z
     .object({
       firstName: z.string().nonempty({ message: "First name is required" }),
@@ -48,8 +51,17 @@ const SignupForm = () => {
       password: data.password,
     };
     try {
-      await signUp(userData);
-      navigate("/", { replace: true });
+      const signUpResponse = await signUp(userData);
+
+      if (signUpResponse !== null) {
+        const credentials = {
+          email: data.email,
+          password: data.password,
+        };
+        const loginResponse = await login(credentials);
+        console.log(loginResponse);
+        navigate("/dashboard", { replace: true });
+      }
     } catch (e) {
       console.log(e);
     }
@@ -59,10 +71,7 @@ const SignupForm = () => {
     try {
       const result = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/signup`,
-        data,
-        {
-          withCredentials: true,
-        }
+        data
       );
       return result;
     } catch (e) {
