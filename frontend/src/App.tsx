@@ -7,6 +7,7 @@ import SignupForm from "./components/auth/SignupForm";
 import ResetPassword from "./components/auth/ResetPassword";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />}></Route>
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
