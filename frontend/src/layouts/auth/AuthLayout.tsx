@@ -1,7 +1,11 @@
-import { Link, Outlet } from "react-router";
+import { Link, Navigate, Outlet } from "react-router";
+import { useAuth } from "../../context/AuthContext";
 
 const AuthLayout = () => {
-  return (
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? (
+    <Navigate to="/dashboard" />
+  ) : (
     <div className="min-h-screen">
       <Link className="block font-bold text-lg p-4" to="/">
         the tour diary

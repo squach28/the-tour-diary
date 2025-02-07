@@ -43,6 +43,14 @@ const SignupForm = () => {
       path: ["confirmPassword"],
     });
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
+
   const submitForm = async (data: FormData) => {
     const userData: UserData = {
       firstName: data.firstName,
@@ -83,14 +91,6 @@ const SignupForm = () => {
       return null;
     }
   };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-  });
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(submitForm)}>
