@@ -41,7 +41,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           withCredentials: true,
         }
       );
-
+      checkAuthStatus();
       return response.data;
     } catch (e) {
       console.log(e);

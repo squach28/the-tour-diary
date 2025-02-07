@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { z, ZodType } from "zod";
 import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 type FormData = {
   email: string;
@@ -10,6 +11,7 @@ type FormData = {
 };
 
 const LoginForm = () => {
+  const [error, setError] = useState<string | null>(null);
   const schema: ZodType<FormData> = z.object({
     email: z.string().email(),
     password: z.string().nonempty({ message: "Password is required" }),
@@ -27,12 +29,14 @@ const LoginForm = () => {
   const submitForm = async (data: FormData) => {
     try {
       const response = await login(data);
-      console.log(response);
+
       if (response !== null) {
         navigate("/dashboard", { replace: true });
+      } else {
+        setError("Incorrect password");
       }
     } catch (e) {
-      console.log(e);
+      console.log("error", e);
     }
   };
 
@@ -75,6 +79,9 @@ const LoginForm = () => {
           <p className="mt-1 text-red-500 font-bold text-sm">
             {errors.password.message}
           </p>
+        ) : null}
+        {error ? (
+          <p className="mt-1 text-red-500 font-bold text-sm">{error}</p>
         ) : null}
       </div>
       <Link className="text-sm" to="/auth/resetPassword">

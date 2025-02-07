@@ -66,8 +66,7 @@ const SignupForm = () => {
           email: data.email,
           password: data.password,
         };
-        const loginResponse = await login(credentials);
-        console.log(loginResponse);
+        await login(credentials);
         navigate("/dashboard", { replace: true });
       }
     } catch (e) {
