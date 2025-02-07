@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 const LoginForm = () => {
   return (
-    <form className="flex flex-col pt-16 px-12 gap-4">
+    <form className="flex flex-col gap-4">
       <h1 className="text-2xl">Welcome back!</h1>
       <div>
         <label className="block mb-1 font-bold" htmlFor="email">

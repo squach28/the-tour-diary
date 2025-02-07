@@ -93,10 +93,7 @@ const SignupForm = () => {
   });
 
   return (
-    <form
-      className="flex flex-col pt-16 pb-6 px-12 gap-4"
-      onSubmit={handleSubmit(submitForm)}
-    >
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(submitForm)}>
       <h1 className="text-2xl">Welcome!</h1>
       <div>
         <label className="block mb-1 font-bold" htmlFor="firstName">
