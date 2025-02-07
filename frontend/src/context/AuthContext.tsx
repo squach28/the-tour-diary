@@ -15,6 +15,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (credentials: UserCredentials) => Promise<{ message: string } | null>;
+  logout: () => Promise<{ message: string } | null>;
 }
 
 type UserCredentials = {
@@ -41,11 +42,29 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           withCredentials: true,
         }
       );
-      checkAuthStatus();
       return response.data;
     } catch (e) {
       console.log(e);
       return null;
+    } finally {
+      checkAuthStatus();
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+
+      return response.data;
+    } catch (e) {
+      console.log(e);
+      return null;
+    } finally {
+      checkAuthStatus();
     }
   };
 
@@ -68,7 +87,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
