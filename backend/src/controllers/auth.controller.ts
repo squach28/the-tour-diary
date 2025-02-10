@@ -137,7 +137,7 @@ export const refresh = (req: express.Request, res: express.Response) => {
   try {
     const token = req.cookies.refreshToken;
     if (token === undefined) {
-      res.status(403).json({ message: "Refresh token is missing" });
+      res.status(401).json({ message: "Refresh token is missing" });
       return;
     }
 
