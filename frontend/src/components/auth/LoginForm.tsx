@@ -3,7 +3,9 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { z, ZodType } from "zod";
 import { useAuth } from "../../context/AuthContext";
-import { useState } from "react";
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 type FormData = {
   email: string;
@@ -17,6 +19,8 @@ const LoginForm = () => {
     password: z.string().nonempty({ message: "Password is required" }),
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -25,6 +29,11 @@ const LoginForm = () => {
     formState: { errors, isSubmitting },
     handleSubmit,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const handleShowPasword = (e: React.MouseEvent<SVGSVGElement>) => {
+    e.stopPropagation();
+    setShowPassword((prev) => !prev);
+  };
 
   const submitForm = async (data: FormData) => {
     try {
@@ -66,15 +75,31 @@ const LoginForm = () => {
         <label className="block mb-1 font-bold" htmlFor="password">
           Password
         </label>
-        <input
-          {...register("password")}
-          id="password"
-          className={`w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0 ${
-            errors.email ? "border-red-400" : ""
-          }`}
-          type="password"
-          placeholder="Enter your password"
-        />
+        <div className="relative">
+          <input
+            {...register("password")}
+            id="password"
+            className={`w-full p-2 border-2 border-gray-200 rounded-sm focus:border-black focus:border-2 focus:outline-0 ${
+              errors.email ? "border-red-400" : ""
+            }`}
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+          />
+          {showPassword ? (
+            <FontAwesomeIcon
+              className="absolute top-4 right-3 hover:cursor-pointer"
+              onClick={handleShowPasword}
+              icon={faEyeSlash}
+            />
+          ) : (
+            <FontAwesomeIcon
+              className="absolute top-4 right-3 hover:cursor-pointer"
+              onClick={handleShowPasword}
+              icon={faEye}
+            />
+          )}
+        </div>
+
         {errors.password ? (
           <p className="mt-1 text-red-500 font-bold text-sm">
             {errors.password.message}
