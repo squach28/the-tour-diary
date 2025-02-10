@@ -84,7 +84,7 @@ const LoginForm = () => {
           <p className="mt-1 text-red-500 font-bold text-sm">{error}</p>
         ) : null}
       </div>
-      <Link className="text-sm" to="/auth/resetPassword">
+      <Link className="text-sm inline-block mr-auto" to="/auth/resetPassword">
         Forgot Password?
       </Link>
       <button
