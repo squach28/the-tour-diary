@@ -12,7 +12,9 @@ const Navbar = () => {
   return (
     <nav>
       <ul className="flex p-4 gap-2 bg-green-200">
-        <li className="font-bold">the tour diary</li>
+        <li className="font-bold">
+          <Link to="/">the tour diary</Link>
+        </li>
         {isAuthenticated && user ? (
           <li className="ml-auto" onClick={handleLogout}>
             {user.id.slice(0, 5)}
