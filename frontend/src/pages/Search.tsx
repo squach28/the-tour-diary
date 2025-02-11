@@ -17,7 +17,9 @@ const Search = () => {
   useEffect(() => {
     const searchByArtist = async (artistName: string) => {
       try {
-        const response = await api.get(`search/artists?artistName=${query}`);
+        const response = await api.get(
+          `search/artists?artistName=${artistName}`
+        );
         setArtists(response.data.artist);
       } catch (e) {
         console.log(e);

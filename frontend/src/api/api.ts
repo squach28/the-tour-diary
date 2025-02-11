@@ -22,13 +22,12 @@ api.interceptors.response.use(
   (response) => response,
   async (err) => {
     const originalRequest = err.config;
-    console.log("intercepting");
     if (err.response.status === 401 && !originalRequest.retry) {
       originalRequest.retry = true;
       try {
         await refreshToken();
         const response = await api(originalRequest);
-        console.log("response", response);
+        return response;
       } catch (e) {
         return Promise.reject(e);
       }
