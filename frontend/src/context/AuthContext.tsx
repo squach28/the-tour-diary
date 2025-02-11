@@ -14,6 +14,7 @@ type User = {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  loading: boolean;
   login: (credentials: UserCredentials) => Promise<{ message: string } | null>;
   logout: () => Promise<{ message: string } | null>;
 }
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkAuthStatus();
@@ -84,10 +86,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log(e);
       setUser(null);
       setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
     }
   };
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, login, logout, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
