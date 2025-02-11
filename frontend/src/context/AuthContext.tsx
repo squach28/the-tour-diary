@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api/api";
 import {
   createContext,
   ReactNode,
@@ -35,7 +35,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (credentials: UserCredentials) => {
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${import.meta.env.VITE_API_URL}/auth/login`,
         credentials,
         {
@@ -53,7 +53,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${import.meta.env.VITE_API_URL}/auth/logout`,
         {},
         { withCredentials: true }
@@ -70,7 +70,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `${import.meta.env.VITE_API_URL}/auth/me`,
         {
           withCredentials: true,
