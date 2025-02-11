@@ -8,7 +8,7 @@ export const searchByArtist = async (
     const { artistName } = req.query;
     const result = await getArtistsByName(artistName as string);
     console.log(result);
-    res.status(200).json({ message: "Success" });
+    res.status(200).json(result);
     return;
   } catch (e) {
     console.log(e);

@@ -14,10 +14,6 @@ import Search from "./pages/Search";
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index={true} element={<Home />}></Route>
-      </Route>
-
       <Route path="/auth" element={<AuthLayout />}>
         <Route path="login" element={<LoginForm />}></Route>
         <Route path="signup" element={<SignupForm />}></Route>
@@ -29,6 +25,10 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/search" element={<Search />}></Route>
         </Route>
+      </Route>
+
+      <Route path="/" element={<Layout />}>
+        <Route index={true} element={<Home />}></Route>
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
