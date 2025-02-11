@@ -12,14 +12,13 @@ export const tokenMiddleware = (
   next: express.NextFunction
 ) => {
   try {
-    const authorization = req.headers.authorization;
-    if (authorization === undefined) {
+    const accessToken = req.cookies.accessToken;
+    if (accessToken === undefined) {
       res.status(401).json({ message: "Token is missing" });
       return;
     }
 
-    const token = authorization.split(" ")[1];
-    const decoded = verifyAccessToken(token);
+    const decoded = verifyAccessToken(accessToken);
     req.user = { id: decoded.id } as User;
 
     if (req.params.id && req.params.id !== req.user.id) {
