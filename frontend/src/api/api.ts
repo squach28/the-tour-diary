@@ -22,7 +22,7 @@ api.interceptors.response.use(
   (response) => response,
   async (err) => {
     const originalRequest = err.config;
-
+    console.log("intercepting");
     if (err.response.status === 401 && !originalRequest.retry) {
       originalRequest.retry = true;
       try {

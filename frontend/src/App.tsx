@@ -8,6 +8,7 @@ import ResetPassword from "./components/auth/ResetPassword";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import ProtectedLayout from "./layouts/ProtectedLayout";
 
 const App = () => {
   return (
@@ -23,7 +24,9 @@ const App = () => {
       </Route>
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route element={<ProtectedLayout />}>
+          <Route path="/dashboard" element={<Dashboard />}></Route>
+        </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
