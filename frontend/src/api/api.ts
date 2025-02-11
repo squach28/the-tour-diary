@@ -27,7 +27,8 @@ api.interceptors.response.use(
       originalRequest.retry = true;
       try {
         await refreshToken();
-        api(originalRequest);
+        const response = await api(originalRequest);
+        console.log("response", response);
       } catch (e) {
         return Promise.reject(e);
       }

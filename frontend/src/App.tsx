@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedLayout from "./layouts/ProtectedLayout";
+import Search from "./pages/Search";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<Dashboard />}></Route>
+          <Route path="/search" element={<Search />}></Route>
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
