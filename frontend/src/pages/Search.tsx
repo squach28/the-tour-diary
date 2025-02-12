@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
 
@@ -55,13 +55,15 @@ const Search = () => {
 const ArtistListItem = ({ artist }: { artist: Artist }) => {
   return (
     <li className="w-3/4 flex flex-col gap-2 p-4 rounded-md shadow-lg">
-      <img
-        className="rounded-md"
-        src={artist.images.length > 0 ? artist.images[0].url : ""}
-        width="100%"
-        alt={artist.name}
-      />
-      <p className="text-center font-bold text-2xl">{artist.name}</p>
+      <Link to={`/artists/${artist.id}`}>
+        <img
+          className="rounded-md"
+          src={artist.images.length > 0 ? artist.images[0].url : ""}
+          width="100%"
+          alt={artist.name}
+        />
+        <p className="text-center font-bold text-2xl">{artist.name}</p>
+      </Link>
     </li>
   );
 };
