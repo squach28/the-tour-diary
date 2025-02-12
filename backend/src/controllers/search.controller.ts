@@ -1,13 +1,13 @@
 import express from "express";
-import { getArtistsByName } from "../utils/setlist";
+import { searchByArtistName } from "../utils/spotify";
+
 export const searchByArtist = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     const { artistName } = req.query;
-    const result = await getArtistsByName(artistName as string);
-    console.log(result);
+    const result = await searchByArtistName(artistName as string);
     res.status(200).json(result);
     return;
   } catch (e) {
