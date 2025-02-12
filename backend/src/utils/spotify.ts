@@ -27,8 +27,15 @@ type ArtistResult = {
   images: Array<Image>;
 };
 
-type SearchArtistResult = {
+type SearchArtistResponse = {
   artists: ArtistsResult;
+};
+
+type ArtistsResponse = {
+  limit: number;
+  offset: number;
+  total: number;
+  artists: Array<ArtistResult>;
 };
 
 const getSpotifyToken = async (): Promise<SpotifyToken | null> => {
@@ -79,9 +86,16 @@ export const searchByArtistName = async (artistName: string) => {
       }
     );
 
-    const result: SearchArtistResult = response.data;
+    const searchResult: SearchArtistResponse = response.data;
 
-    return result.artists;
+    const result: ArtistsResponse = {
+      limit: searchResult.artists.limit,
+      offset: searchResult.artists.offset,
+      total: searchResult.artists.total,
+      artists: searchResult.artists.items,
+    };
+
+    return result;
   } catch (e) {
     console.log(e);
   }
