@@ -17,7 +17,6 @@ type ArtistsResult = {
   offset: number;
   total: number;
   items: Array<ArtistResult>;
-  images: Array<Image>;
 };
 
 type ArtistResult = {
@@ -25,6 +24,7 @@ type ArtistResult = {
   followers: { href: string | null; total: number };
   href: string;
   name: string;
+  images: Array<Image>;
 };
 
 type SearchArtistResult = {
