@@ -6,6 +6,7 @@ import { queries as userQueries } from "../db/queries/users";
 import {
   generateAccessToken,
   generateRefreshToken,
+  verifyAccessToken,
   verifyRefreshToken,
 } from "../utils/jwt";
 
@@ -43,7 +44,8 @@ export const signup = async (req: express.Request, res: express.Response) => {
       email,
     ]);
     await client.query("COMMIT");
-    res.status(200).json({ message: "User was sucessfully created" });
+    res.status(201).json({ message: "User was sucessfully created" });
+    return;
   } catch (e) {
     console.log(e);
     await client.query("ROLLBACK");
@@ -101,11 +103,41 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
 };
 
+export const logout = (req: express.Request, res: express.Response) => {
+  try {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.status(200).json({ message: "Success" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  }
+};
+
+export const checkAuth = (req: express.Request, res: express.Response) => {
+  try {
+    const token = req.cookies.accessToken;
+    if (token === undefined) {
+      res.status(401).json({ message: "Not authenticated" });
+      return;
+    }
+
+    const decoded = verifyAccessToken(token);
+    res.status(200).json({ id: decoded.id });
+    return;
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  }
+};
+
 export const refresh = (req: express.Request, res: express.Response) => {
   try {
     const token = req.cookies.refreshToken;
     if (token === undefined) {
-      res.status(403).json({ message: "Refresh token is missing" });
+      res.status(401).json({ message: "Refresh token is missing" });
       return;
     }
 
