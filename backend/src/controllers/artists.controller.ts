@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchArtistById } from "../utils/spotify";
+import { fetchArtistById, fetchArtistTopSongsById } from "../utils/spotify";
 
 export const getArtistById = async (
   req: express.Request,
@@ -14,7 +14,8 @@ export const getArtistById = async (
     }
 
     const artist = await fetchArtistById(id);
-    res.status(200).json(artist);
+    const topSongs = await fetchArtistTopSongsById(id);
+    res.status(200).json({ artist, topSongs });
     return;
   } catch (e) {
     res.status(500).json({ message: "Something went wrong" });

@@ -39,6 +39,14 @@ type ArtistsResponse = {
   artists: Array<ArtistResult>;
 };
 
+type Track = {
+  name: string;
+};
+
+type TopSongsResponse = {
+  tracks: Array<Track>;
+};
+
 const getSpotifyToken = async (): Promise<SpotifyToken | null> => {
   const TOKEN_URL = "https://accounts.spotify.com/api/token";
   try {
@@ -70,22 +78,34 @@ const getSpotifyToken = async (): Promise<SpotifyToken | null> => {
   }
 };
 
+const request = async (
+  url: string
+): Promise<axios.AxiosResponse<any, any> | null> => {
+  try {
+    const token = await getSpotifyToken();
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token.accessToken}`,
+      },
+    });
+
+    return response;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
 export const searchByArtistName = async (artistName: string) => {
   const SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
   try {
-    const token = await getSpotifyToken();
-    if (!token) {
-      throw new Error("Something wrong with retrieving token");
-    }
-
-    const response = await axios.get(
-      `${SPOTIFY_SEARCH_URL}?q=${artistName}&type=artist`,
-      {
-        headers: {
-          Authorization: `Bearer ${token.accessToken}`,
-        },
-      }
+    const response = await request(
+      `${SPOTIFY_SEARCH_URL}?q=${artistName}&type=artist`
     );
+
+    if (!response) {
+      throw new Error("Error occurred with Spotify API");
+    }
 
     const searchResult: SearchArtistResponse = response.data;
 
@@ -103,23 +123,35 @@ export const searchByArtistName = async (artistName: string) => {
 };
 
 export const fetchArtistById = async (id: string): Promise<Artist | null> => {
+  const SPOTIFY_ARTIST_URL = "https://api.spotify.com/v1/artists";
   try {
-    const SPOTIFY_ARTIST_URL = "https://api.spotify.com/v1/artists";
-    const token = await getSpotifyToken();
+    const response = await request(`${SPOTIFY_ARTIST_URL}/${id}`);
 
-    if (!token) {
-      throw new Error("Something wrong with retrieving token");
+    if (!response) {
+      throw new Error("Error occurred with Spotify API");
     }
-
-    const response = await axios.get(`${SPOTIFY_ARTIST_URL}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token.accessToken}`,
-      },
-    });
-
     const artist: Artist = response.data;
 
     return artist;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const fetchArtistTopSongsById = async (
+  id: string
+): Promise<TopSongsResponse | null> => {
+  try {
+    const SPOTIFY_ARTIST_TOP_SONGS_URL = `https://api.spotify.com/v1/artists/${id}/top-tracks`;
+    const response = await request(SPOTIFY_ARTIST_TOP_SONGS_URL);
+    if (!response) {
+      throw new Error("Error occurred with Spotify API");
+    }
+
+    const topSongs: TopSongsResponse = response.data;
+
+    return topSongs;
   } catch (e) {
     console.log(e);
     return null;
