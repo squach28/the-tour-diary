@@ -10,7 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import Search from "./pages/Search";
-import Artist from "./pages/Artist";
+import ArtistDetails from "./pages/ArtistDetails";
 
 const App = () => {
   return (
@@ -26,7 +26,7 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/search" element={<Search />}></Route>
           <Route path="/artists">
-            <Route path=":id" element={<Artist />}></Route>
+            <Route path=":id" element={<ArtistDetails />}></Route>
           </Route>
         </Route>
       </Route>
