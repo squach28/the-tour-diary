@@ -14,7 +14,8 @@ export const getArtistById = async (
     }
 
     const artist = await fetchArtistById(id);
-    const topSongs = await fetchArtistTopSongsById(id);
+    const tracks = await fetchArtistTopSongsById(id);
+    const topSongs = tracks.tracks;
     res.status(200).json({ artist, topSongs });
     return;
   } catch (e) {
