@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Artist } from "../types/Artist";
 
 type SpotifyToken = {
   accessToken: string;
@@ -98,5 +99,29 @@ export const searchByArtistName = async (artistName: string) => {
     return result;
   } catch (e) {
     console.log(e);
+  }
+};
+
+export const fetchArtistById = async (id: string): Promise<Artist | null> => {
+  try {
+    const SPOTIFY_ARTIST_URL = "https://api.spotify.com/v1/artists";
+    const token = await getSpotifyToken();
+
+    if (!token) {
+      throw new Error("Something wrong with retrieving token");
+    }
+
+    const response = await axios.get(`${SPOTIFY_ARTIST_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token.accessToken}`,
+      },
+    });
+
+    const artist: Artist = response.data;
+
+    return artist;
+  } catch (e) {
+    console.log(e);
+    return null;
   }
 };
