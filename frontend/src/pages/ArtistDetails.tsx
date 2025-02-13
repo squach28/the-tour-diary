@@ -28,7 +28,23 @@ const ArtistDetails = () => {
   return (
     <>
       {loading ? <p>Loading...</p> : null}
-      {artist ? <div>{artist.name}</div> : null}
+      {artist ? (
+        <div>
+          <img
+            className="w-1/2 h-1/2 rounded-full mx-auto p-4"
+            src={artist.images[0].url}
+            alt=""
+          />
+          <div className="text-center">
+            <h1 className="text-center text-3xl font-bold">{artist.name}</h1>
+            <ul>
+              {artist.genres.map((genre) => (
+                <li key={genre}>{genre}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };
