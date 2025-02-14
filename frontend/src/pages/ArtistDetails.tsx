@@ -56,9 +56,9 @@ const ArtistDetails = () => {
             <h1 className="text-center text-3xl font-bold">
               {artistDetails.artist.name}
             </h1>
-            <ul>
+            <ul className="w-3/4 flex justify-around gap-2 mx-auto py-2">
               {artistDetails.artist.genres.map((genre) => (
-                <li key={genre}>{genre}</li>
+                <Genre key={genre} genre={genre} />
               ))}
             </ul>
           </div>
@@ -85,6 +85,10 @@ const ArtistDetails = () => {
       ) : null}
     </>
   );
+};
+
+const Genre = ({ genre }: { genre: string }) => {
+  return <li className="p-2 shadow-md">{genre}</li>;
 };
 
 export default ArtistDetails;
