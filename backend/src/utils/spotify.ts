@@ -149,7 +149,10 @@ export const fetchArtistTopSongsById = async (
       throw new Error("Error occurred with Spotify API");
     }
 
-    const topSongs: TopSongsResponse = response.data;
+    const tracks = response.data.tracks.slice(0, 5);
+    const topSongs: TopSongsResponse = {
+      tracks,
+    };
 
     return topSongs;
   } catch (e) {
