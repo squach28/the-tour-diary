@@ -38,8 +38,9 @@ const Search = () => {
 
   return (
     <div>
-      {loading ? <p>Loading...</p> : null}
-      <div>
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-center">Results for: {query}</h1>
+        {loading ? <p>Loading...</p> : null}
         <ul className="flex flex-col items-center pt-4 gap-10">
           {searchResult
             ? searchResult.artists.map((artist) => (
