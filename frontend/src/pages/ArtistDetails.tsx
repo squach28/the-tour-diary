@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
 import { Track } from "../types/Track";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ArtistDetails = () => {
   const params = useParams();
@@ -11,6 +13,8 @@ const ArtistDetails = () => {
     topSongs: Array<Track>;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getArtistById = async (id: string) => {
       try {
@@ -29,11 +33,20 @@ const ArtistDetails = () => {
     }
   }, []);
 
+  const navigateBack = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       {loading ? <p>Loading...</p> : null}
       {artistDetails ? (
         <div className="p-4">
+          <FontAwesomeIcon
+            size="xl"
+            onClick={() => navigateBack()}
+            icon={faArrowLeft}
+          />
           <img
             className="w-1/2 h-1/2 rounded-full mx-auto p-4"
             src={artistDetails.artist.images[0].url}
