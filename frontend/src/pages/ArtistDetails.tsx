@@ -49,9 +49,23 @@ const ArtistDetails = () => {
               ))}
             </ul>
           </div>
-          <ol className="list-decimal list-inside">
-            {artistDetails.topSongs.map((song) => (
-              <li key={song.id}>{song.name}</li>
+          <h2 className="text-2xl font-bold">Top Songs</h2>
+          <ol className="flex flex-col gap-2 mt-4 list-decimal list-outside">
+            {artistDetails.topSongs.map((song, index) => (
+              <li
+                className="flex gap-4 items-center p-2 border border-gray-300 shadow-md rounded-md"
+                key={song.id}
+              >
+                <p className="text-lg font-bold">{index + 1}</p>
+                <img
+                  width="48"
+                  height="48"
+                  className="rounded-lg"
+                  src={song.album.images[0].url}
+                  alt={song.album.name}
+                />
+                <p>{song.name}</p>
+              </li>
             ))}
           </ol>
         </div>
