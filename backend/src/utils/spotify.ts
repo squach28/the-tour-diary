@@ -26,6 +26,7 @@ type ArtistResult = {
   href: string;
   name: string;
   images: Array<Image>;
+  genres: Array<string>;
 };
 
 type SearchArtistResponse = {
@@ -155,6 +156,26 @@ export const fetchArtistTopSongsById = async (
     };
 
     return topSongs;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const fetchAlbumByArtistId = async (artistId: string) => {
+  try {
+    const SPOTIFY_ALBUM_URL = `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&limit=1`;
+    const response = await request(SPOTIFY_ALBUM_URL);
+    if (!response) {
+      throw new Error("Error occurred with Spotify API");
+    }
+
+    const data = response.data;
+
+    return {
+      artistId,
+      album: data.items[0],
+    };
   } catch (e) {
     console.log(e);
     return null;

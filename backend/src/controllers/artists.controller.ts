@@ -1,8 +1,13 @@
 import express from "express";
 import { fetchArtistById, fetchArtistTopSongsById } from "../utils/spotify";
+import { Artist } from "../types/Artist";
+
+interface RequestWithArtist extends express.Request {
+  artist: Artist;
+}
 
 export const getArtistById = async (
-  req: express.Request,
+  req: RequestWithArtist,
   res: express.Response
 ) => {
   try {
@@ -13,7 +18,11 @@ export const getArtistById = async (
       return;
     }
 
-    const artist = await fetchArtistById(id);
+    const artist = req.artist;
+    if (artist === undefined) {
+      res.status(404).json({ message: "Artist not found" });
+      return;
+    }
     const tracks = await fetchArtistTopSongsById(id);
     const topSongs = tracks.tracks;
     res.status(200).json({ artist, topSongs });
