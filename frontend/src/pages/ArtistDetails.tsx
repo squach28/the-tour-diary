@@ -5,12 +5,14 @@ import { Artist } from "../types/Artist";
 import { Track } from "../types/Track";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Concert } from "../types/Concert";
 
 const ArtistDetails = () => {
   const params = useParams();
   const [artistDetails, setArtistDetails] = useState<{
     artist: Artist;
     topSongs: Array<Track>;
+    futureConcerts: Array<Concert>;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -81,6 +83,7 @@ const ArtistDetails = () => {
               </li>
             ))}
           </ol>
+          <FutureConcerts futureConcerts={artistDetails.futureConcerts} />
         </div>
       ) : null}
     </>
@@ -89,6 +92,27 @@ const ArtistDetails = () => {
 
 const Genre = ({ genre }: { genre: string }) => {
   return <li className="p-2 shadow-md">{genre}</li>;
+};
+
+const FutureConcerts = ({
+  futureConcerts,
+}: {
+  futureConcerts: Array<Concert>;
+}) => {
+  return (
+    <>
+      <h2 className="text-2xl font-bold py-2">Future Concerts</h2>
+      {futureConcerts.length > 0 ? (
+        <ul>
+          {futureConcerts.map((concert) => (
+            <li key={concert.id}>{concert.id}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No upcoming concerts</p>
+      )}
+    </>
+  );
 };
 
 export default ArtistDetails;

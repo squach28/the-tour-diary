@@ -1,3 +1,4 @@
+import { Concert } from "./Concert";
 import { Image } from "./Image";
 
 export type Artist = {
