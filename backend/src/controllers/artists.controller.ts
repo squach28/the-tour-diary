@@ -41,13 +41,15 @@ export const getArtistById = async (
         return concert;
       }
     });
-    const pastConcerts = concerts.filter((concert: Concert) => {
-      const [day, month, year] = concert.eventDate.split("-");
-      const concertDate = new Date(Number(year), Number(month), Number(day));
-      if (concertDate < new Date()) {
-        return concert;
-      }
-    });
+    const pastConcerts = concerts
+      .filter((concert: Concert) => {
+        const [day, month, year] = concert.eventDate.split("-");
+        const concertDate = new Date(Number(year), Number(month), Number(day));
+        if (concertDate < new Date()) {
+          return concert;
+        }
+      })
+      .slice(0, 5);
 
     res.status(200).json({ artist, topSongs, futureConcerts, pastConcerts });
     return;
