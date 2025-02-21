@@ -41,8 +41,15 @@ export const getArtistById = async (
         return concert;
       }
     });
+    const pastConcerts = concerts.filter((concert: Concert) => {
+      const [day, month, year] = concert.eventDate.split("-");
+      const concertDate = new Date(Number(year), Number(month), Number(day));
+      if (concertDate < new Date()) {
+        return concert;
+      }
+    });
 
-    res.status(200).json({ artist, topSongs, futureConcerts });
+    res.status(200).json({ artist, topSongs, futureConcerts, pastConcerts });
     return;
   } catch (e) {
     res.status(500).json({ message: "Something went wrong" });
