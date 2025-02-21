@@ -13,6 +13,7 @@ const ArtistDetails = () => {
     artist: Artist;
     topSongs: Array<Track>;
     futureConcerts: Array<Concert>;
+    pastConcerts: Array<Concert>;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -84,6 +85,7 @@ const ArtistDetails = () => {
             ))}
           </ol>
           <FutureConcerts futureConcerts={artistDetails.futureConcerts} />
+          <PastConcerts pastConcerts={artistDetails.pastConcerts} />
         </div>
       ) : null}
     </>
@@ -110,6 +112,23 @@ const FutureConcerts = ({
         </ul>
       ) : (
         <p>No upcoming concerts</p>
+      )}
+    </>
+  );
+};
+
+const PastConcerts = ({ pastConcerts }: { pastConcerts: Array<Concert> }) => {
+  return (
+    <>
+      <h2 className="text-2xl font-bold py-2">Past Concerts</h2>
+      {pastConcerts.length > 0 ? (
+        <ul>
+          {pastConcerts.map((concert) => (
+            <li key={concert.id}>{concert.id}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No concerts yet performed by artist</p>
       )}
     </>
   );
