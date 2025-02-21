@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
 import { Track } from "../types/Track";
@@ -85,7 +85,10 @@ const ArtistDetails = () => {
             ))}
           </ol>
           <FutureConcerts futureConcerts={artistDetails.futureConcerts} />
-          <PastConcerts pastConcerts={artistDetails.pastConcerts} />
+          <PastConcerts
+            pastConcerts={artistDetails.pastConcerts}
+            artistId={artistDetails.artist.id}
+          />
         </div>
       ) : null}
     </>
@@ -117,20 +120,48 @@ const FutureConcerts = ({
   );
 };
 
-const PastConcerts = ({ pastConcerts }: { pastConcerts: Array<Concert> }) => {
+const PastConcerts = ({
+  pastConcerts,
+  artistId,
+}: {
+  pastConcerts: Array<Concert>;
+  artistId: string;
+}) => {
   return (
     <>
       <h2 className="text-2xl font-bold py-2">Past Concerts</h2>
       {pastConcerts.length > 0 ? (
-        <ul>
-          {pastConcerts.map((concert) => (
-            <li key={concert.id}>{concert.id}</li>
-          ))}
-        </ul>
+        <>
+          <ul className="flex flex-nowrap gap-8 overflow-x-scroll">
+            {pastConcerts.map((concert) => (
+              <ConcertListElement key={concert.id} concert={concert} />
+            ))}
+          </ul>
+          <Link to={`/artists/${artistId}/concerts`}>See all concerts</Link>
+        </>
       ) : (
         <p>No concerts yet performed by artist</p>
       )}
     </>
+  );
+};
+
+const ConcertListElement = ({ concert }: { concert: Concert }) => {
+  const formatDate = (date: string) => {
+    const [day, month, year] = date.split("-");
+    const formattedDate = new Date(Number(year), Number(month), Number(day));
+    return formattedDate.toLocaleDateString("en-US");
+  };
+  return (
+    <li className="flex flex-col justify-center items-center gap-2 min-w-1/2 min-h-36 shadow-md p-2 text-center my-4">
+      <div>
+        <span>{concert.venue.city.name}, </span>
+        <span>{concert.venue.city.country.name}</span>
+      </div>
+      <p>{concert.venue.name}</p>
+
+      <p>{formatDate(concert.eventDate)}</p>
+    </li>
   );
 };
 
