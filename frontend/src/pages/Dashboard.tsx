@@ -3,7 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
-const Search = () => {
+const Dashboard = () => {
+  return (
+    <div>
+      <ArtistSearch />
+    </div>
+  );
+};
+
+const ArtistSearch = () => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
@@ -27,14 +35,6 @@ const Search = () => {
         <FontAwesomeIcon icon={faSearch} />
       </button>
     </form>
-  );
-};
-
-const Dashboard = () => {
-  return (
-    <div>
-      <Search />
-    </div>
   );
 };
 

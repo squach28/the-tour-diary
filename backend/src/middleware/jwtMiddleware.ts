@@ -21,11 +21,6 @@ export const tokenMiddleware = (
     const decoded = verifyAccessToken(accessToken);
     req.user = { id: decoded.id } as User;
 
-    if (req.params.id && req.params.id !== req.user.id) {
-      res.status(403).json({ message: "Unauthorized" });
-      return;
-    }
-
     next();
   } catch (e) {
     res.status(401).json({ message: "Invalid token" });

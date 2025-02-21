@@ -6,6 +6,7 @@ import { usersRouter } from "./routes/users.route";
 import { concertsRouter } from "./routes/concerts.route";
 import cors from "cors";
 import { searchRouter } from "./routes/search.route";
+import { artistsRouter } from "./routes/artists.route";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/search", searchRouter);
+app.use("/artists", artistsRouter);
 app.use("", concertsRouter);
 
 app.listen(PORT, () => {
