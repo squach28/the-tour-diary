@@ -17,7 +17,6 @@ export const artistMiddleware = async (
   try {
     const { id } = req.params;
     const artist = await fetchArtistById(id);
-    console.log(artist);
     const artistExists = await db.query(artistQueries.getArtistBySpotifyId, [
       id,
     ]);

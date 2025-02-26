@@ -15,9 +15,5 @@ usersRouter.put("/:id", tokenMiddleware, updateUserById);
 usersRouter.delete("/:id", tokenMiddleware, deleteUserById);
 
 // Concert related endpoints
-usersRouter.post("/users/:userId/concerts/", tokenMiddleware, addConcertToUser);
-usersRouter.delete(
-  "/users/:userId/concerts",
-  tokenMiddleware,
-  removeConcertFromUser
-);
+usersRouter.post("/:userId/concerts", tokenMiddleware, addConcertToUser);
+usersRouter.delete("/:userId/concerts", tokenMiddleware, removeConcertFromUser);
