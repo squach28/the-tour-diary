@@ -2,6 +2,7 @@ import express from "express";
 import { db } from "../db/db";
 import { queries as userQueries } from "../db/queries/users";
 import { queries as authQueries } from "../db/queries/auth";
+import { queries as concertQueries } from "../db/queries/concerts";
 import validator from "validator";
 
 export const getUserById = async (
@@ -114,6 +115,64 @@ export const deleteUserById = async (
   } catch (e) {
     console.log(e);
     await client.query("ROLLBACK");
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  } finally {
+    client.release();
+  }
+};
+
+// Concert related queries
+
+export const addConcertToUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const client = await db.connect();
+  try {
+    const { concertId } = req.body;
+    const { userId } = req.params;
+    if (concertId === undefined || userId === undefined) {
+      res.status(400).json({ message: "Missing concertId and/or userId" });
+      return;
+    }
+
+    await db.query(concertQueries.insertConcertByUserId, [userId, concertId]);
+
+    await client.query("COMMIT");
+    res.status(201).json({ message: "Success" });
+    return;
+  } catch (e) {
+    console.log(e);
+    await db.query("ROLLBACK");
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  } finally {
+    client.release();
+  }
+};
+
+export const removeConcertFromUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const client = await db.connect();
+  try {
+    const { concertId } = req.body;
+    const { userId } = req.params;
+    if (concertId === undefined || userId === undefined) {
+      res.status(400).json({ message: "Missing concertId and/or userId" });
+      return;
+    }
+
+    await db.query(concertQueries.deleteConcertByUserId, [userId, concertId]);
+
+    await client.query("COMMIT");
+    res.status(201).json({ message: "Success" });
+    return;
+  } catch (e) {
+    console.log(e);
+    await db.query("ROLLBACK");
     res.status(500).json({ message: "Something went wrong" });
     return;
   } finally {
