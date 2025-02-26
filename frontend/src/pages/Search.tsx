@@ -70,5 +70,4 @@ const ArtistListItem = ({ artist }: { artist: Artist }) => {
     </li>
   );
 };
-
 export default Search;
