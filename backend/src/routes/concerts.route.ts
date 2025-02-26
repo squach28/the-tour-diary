@@ -2,6 +2,7 @@ import { tokenMiddleware } from "../middleware/jwtMiddleware";
 import {
   addConcert,
   getConcertById,
+  getConcertsByArtistId,
   removeConcert,
 } from "../controllers/concerts.controller";
 import express from "express";
@@ -14,4 +15,9 @@ concertsRouter.delete(
   "/users/:userId/concerts",
   tokenMiddleware,
   removeConcert
+);
+concertsRouter.get(
+  "/artists/:artistId/concerts",
+  tokenMiddleware,
+  getConcertsByArtistId
 );
