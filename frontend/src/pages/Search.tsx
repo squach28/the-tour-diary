@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
 type ArtistSearchResult = {
   offset: number;
@@ -43,7 +45,7 @@ const Search = () => {
           Results for: {query}
         </h1>
         {loading ? <p>Loading...</p> : null}
-        <ul className="flex flex-col items-center pt-4 gap-10">
+        <ul className="max-w-5xl mx-auto grid grid-cols-1 place-items-center pt-4 gap-10 md:grid-cols-2">
           {searchResult
             ? searchResult.artists.map((artist) => (
                 <ArtistListItem key={artist.id} artist={artist} />
@@ -55,17 +57,30 @@ const Search = () => {
   );
 };
 
+const GenreTag = ({ genre }: { genre: string }) => {
+  return <li className="bg-green-200 px-2 py-1 rounded-md">{genre}</li>;
+};
+
 const ArtistListItem = ({ artist }: { artist: Artist }) => {
   return (
-    <li className="w-3/4 flex flex-col gap-2 p-4 rounded-md shadow-lg">
+    <li className="w-3/4 flex flex-col gap-2 p-4 rounded-md shadow-lg hover:shadow-xl">
       <Link to={`/artists/${artist.id}`}>
-        <img
-          className="rounded-md"
-          src={artist.images.length > 0 ? artist.images[0].url : ""}
-          width="100%"
-          alt={artist.name}
-        />
-        <p className="text-center font-bold text-2xl">{artist.name}</p>
+        <div className="flex gap-4">
+          <img
+            width="50px"
+            height="50px"
+            className="rounded-full"
+            src={artist.images.length > 0 ? artist.images[0].url : ""}
+            alt={artist.name}
+          />
+          <span className="text-center font-bold text-xl">{artist.name}</span>
+          <FontAwesomeIcon className="ml-auto" icon={faHeart} size="lg" />
+        </div>
+        <ul className="flex flex-wrap gap-2 py-2">
+          {artist.genres.map((genre) => (
+            <GenreTag key={genre} genre={genre} />
+          ))}
+        </ul>
       </Link>
     </li>
   );
