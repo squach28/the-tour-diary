@@ -63,6 +63,15 @@ const ConcertListElement = ({ concert }: { concert: Concert }) => {
       <p>{concert.venue.name}</p>
 
       <p>{formatDate(concert.eventDate)}</p>
+      {concert.attended ? (
+        <button className="px-4 py-3 border-1 border-green-500 rounded-md hover:shadow-md hover:cursor-pointer">
+          Attended
+        </button>
+      ) : (
+        <button className="px-4 py-3 border-1 rounded-md hover:shadow-md hover:cursor-pointer">
+          Didn't attend
+        </button>
+      )}
     </li>
   );
 };
