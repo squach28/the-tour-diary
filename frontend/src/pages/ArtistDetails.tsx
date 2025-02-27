@@ -134,7 +134,7 @@ const PastConcerts = ({
       <h2 className="text-2xl font-bold py-2">Past Concerts</h2>
       {pastConcerts.length > 0 ? (
         <>
-          <ul className="flex flex-nowrap gap-8 overflow-x-scroll">
+          <ul className="flex flex-nowrap gap-8 overflow-x-scroll snap-x">
             {pastConcerts.map((concert) => (
               <ConcertListElement key={concert.id} concert={concert} />
             ))}
@@ -155,7 +155,7 @@ const ConcertListElement = ({ concert }: { concert: Concert }) => {
     return formattedDate.toLocaleDateString("en-US");
   };
   return (
-    <li className="flex flex-col justify-center items-center gap-2 min-w-1/2 min-h-36 shadow-md p-2 text-center my-4">
+    <li className="flex flex-col justify-center items-center gap-2 min-w-1/2 min-h-36 shadow-md p-2 text-center my-4 snap-center">
       <div>
         <span>{concert.venue.city.name}, </span>
         <span>{concert.venue.city.country.name}</span>
