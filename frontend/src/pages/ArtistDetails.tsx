@@ -6,6 +6,7 @@ import { Track } from "../types/Track";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Concert } from "../types/Concert";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
 const ArtistDetails = () => {
   const params = useParams();
@@ -45,11 +46,15 @@ const ArtistDetails = () => {
       {loading ? <p>Loading...</p> : null}
       {artistDetails ? (
         <div className="p-4">
-          <FontAwesomeIcon
-            size="xl"
-            onClick={() => navigateBack()}
-            icon={faArrowLeft}
-          />
+          <div className="flex justify-between">
+            <FontAwesomeIcon
+              className="hover:cursor-pointer"
+              size="xl"
+              onClick={() => navigateBack()}
+              icon={faArrowLeft}
+            />
+            <FontAwesomeIcon size="xl" icon={faHeart} />
+          </div>
           <img
             className="w-1/2 h-1/2 rounded-full mx-auto p-4"
             src={artistDetails.artist.images[0].url}
