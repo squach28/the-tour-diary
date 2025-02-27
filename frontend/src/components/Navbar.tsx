@@ -3,14 +3,8 @@ import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 
 const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [showSideNavBar, setShowSideNavBar] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/", { replace: true });
-  };
 
   const toggleSideNavBar = () => {
     setShowSideNavBar((prev) => !prev);
