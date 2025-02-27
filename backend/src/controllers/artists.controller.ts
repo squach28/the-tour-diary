@@ -5,8 +5,13 @@ import { db } from "../db/db";
 import { queries as artistQueries } from "../db/queries/artists";
 import { fetchConcertsByArtistId } from "../utils/setlist";
 import { Concert } from "../types/Concert";
+import { User } from "../types/User";
 
-interface RequestWithArtist extends express.Request {
+interface RequestWithToken extends express.Request {
+  user: User;
+}
+
+interface RequestWithArtist extends RequestWithToken {
   artist: Artist;
 }
 
@@ -15,6 +20,7 @@ export const getArtistById = async (
   res: express.Response
 ) => {
   try {
+    const userId = req.user.id;
     const { id } = req.params;
 
     if (id === undefined) {
@@ -51,7 +57,16 @@ export const getArtistById = async (
       })
       .slice(0, 5);
 
-    res.status(200).json({ artist, topSongs, futureConcerts, pastConcerts });
+    const isFavoriteResult = await db.query(
+      artistQueries.isArtistInUserFavorites,
+      [userId, id]
+    );
+
+    const favorite = isFavoriteResult.rows[0].is_favorite;
+
+    res
+      .status(200)
+      .json({ artist, topSongs, futureConcerts, pastConcerts, favorite });
     return;
   } catch (e) {
     res.status(500).json({ message: "Something went wrong" });
