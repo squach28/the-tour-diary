@@ -231,7 +231,7 @@ export const removeConcertFromUser = async (
       [userId, concertId]
     );
     const concert = result.rows[0];
-    res.status(201).json(concert);
+    res.status(200).json(concert);
     return;
   } catch (e) {
     console.log(e);
