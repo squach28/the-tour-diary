@@ -6,6 +6,7 @@ import { queries as concertQueries } from "../db/queries/concerts";
 import { queries as artistQueries } from "../db/queries/artists";
 import validator from "validator";
 import { fetchConcertById } from "../utils/setlist";
+import { fetchArtistById } from "../utils/spotify";
 
 export const getUserById = async (
   req: express.Request,
@@ -38,10 +39,25 @@ export const getUserById = async (
     const concertIds = concertsResult.rows.map((item) => item.concert_id);
 
     const fetchDataForConcerts = concertIds
-      .map((id) => fetchConcertById(id))
-      .slice(0, 5);
+      .slice(0, 5)
+      .map((id) => fetchConcertById(id));
 
     const concerts = await Promise.all(fetchDataForConcerts);
+
+    const favoriteArtistsResult = await db.query(
+      artistQueries.getFavoriteArtistsByUserId,
+      [id]
+    );
+
+    const favoriteArtistsIds = favoriteArtistsResult.rows.map(
+      (artist) => artist.artist_id
+    );
+
+    const fetchDataForFavoriteArtists = favoriteArtistsIds
+      .slice(0, 5)
+      .map((id) => fetchArtistById(id));
+
+    const favoriteArtists = await Promise.all(fetchDataForFavoriteArtists);
 
     const user = {
       id: userResult.id,
@@ -49,6 +65,7 @@ export const getUserById = async (
       lastName: userResult.last_name,
       email: userResult.email,
       concerts,
+      favoriteArtists,
     };
 
     res.status(200).json(user);
