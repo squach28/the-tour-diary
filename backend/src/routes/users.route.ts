@@ -1,4 +1,7 @@
-import { tokenMiddleware } from "../middleware/jwtMiddleware";
+import {
+  authorizeUserMiddleware,
+  tokenMiddleware,
+} from "../middleware/jwtMiddleware";
 import {
   addArtistToUserFavorites,
   addConcertToUser,
@@ -23,17 +26,30 @@ usersRouter.get(
   tokenMiddleware,
   getConcertByUserIdAndConcertId
 );
-usersRouter.post("/:userId/concerts", tokenMiddleware, addConcertToUser);
+usersRouter.post(
+  "/:userId/concerts",
+  tokenMiddleware,
+  authorizeUserMiddleware,
+  addConcertToUser
+);
 usersRouter.delete(
   "/:userId/concerts/:concertId",
+  authorizeUserMiddleware,
+
   tokenMiddleware,
   removeConcertFromUser
 );
 
 // Artist related queries
-usersRouter.post("/:userId/artists", tokenMiddleware, addArtistToUserFavorites);
+usersRouter.post(
+  "/:userId/artists",
+  tokenMiddleware,
+  authorizeUserMiddleware,
+  addArtistToUserFavorites
+);
 usersRouter.delete(
   "/:userId/artists/:artistId",
   tokenMiddleware,
+  authorizeUserMiddleware,
   removeArtistFromUserFavorites
 );

@@ -30,3 +30,20 @@ export const tokenMiddleware = (
     return;
   }
 };
+
+// middleware to authorize that a user can perform the action
+export const authorizeUserMiddleware = (
+  req: RequestWithToken,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const userId = req.user.id;
+  const { userIdFromParam } = req.params;
+
+  if (userId !== userIdFromParam) {
+    res.status(403).json({ message: "Forbidden" });
+    return;
+  }
+
+  next();
+};
