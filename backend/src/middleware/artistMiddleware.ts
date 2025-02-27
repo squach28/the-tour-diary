@@ -3,7 +3,7 @@ import { db } from "../db/db";
 import { queries as artistQueries } from "../db/queries/artists";
 import { fetchArtistById } from "../utils/spotify";
 import { Artist } from "../types/Artist";
-import { fetchArtistByNameAndTag } from "../utils/musicBrainz";
+import { fetchArtistByName } from "../utils/musicBrainz";
 
 interface RequestWithArtist extends express.Request {
   artist: Artist;
@@ -22,8 +22,8 @@ export const artistMiddleware = async (
     ]);
     // artist isn't in db, must do api calls to add spotify_id and mbid information
     if (artistExists.rowCount === 0) {
-      const { name, genres } = artist;
-      const response = await fetchArtistByNameAndTag(name, genres[0]);
+      const { name } = artist;
+      const response = await fetchArtistByName(name);
       const client = await db.connect();
       try {
         const mbid = response.id;

@@ -10,6 +10,7 @@ export interface Concert {
   sets: Sets;
   info: string;
   url: string;
+  attended: boolean;
 }
 
 export interface Venue {
