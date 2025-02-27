@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import api from "../api/api";
@@ -97,7 +97,7 @@ const FavoriteArtistsList = ({ artists }: { artists: Array<Artist> }) => {
   return (
     <>
       <h2 className="font-bold text-3xl">Favorite Artists</h2>
-      <ul className="flex flex-col">
+      <ul className="flex flex-col gap-2">
         {artists.map((artist) => (
           <FavoriteArtistListItem key={artist.id} artist={artist} />
         ))}
@@ -109,8 +109,19 @@ const FavoriteArtistsList = ({ artists }: { artists: Array<Artist> }) => {
 const FavoriteArtistListItem = ({ artist }: { artist: Artist }) => {
   return (
     <li>
-      <img src={artist.images[0].url ?? ""} alt={artist.name} />
-      <p>{artist.name}</p>
+      <Link
+        className="w-full shadow-md p-2 rounded-md flex gap-2 items-center"
+        to={`/artists/${artist.id}`}
+      >
+        <img
+          width="75"
+          height="75"
+          className="rounded-full"
+          src={artist.images[0].url ?? ""}
+          alt={artist.name}
+        />
+        <p className="text-2xl">{artist.name}</p>
+      </Link>
     </li>
   );
 };
