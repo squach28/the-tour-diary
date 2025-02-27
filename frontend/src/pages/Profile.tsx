@@ -1,9 +1,10 @@
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import api from "../api/api";
 import { Concert } from "../types/Concert";
 import { User } from "../types/User";
+import { Artist } from "../types/Artist";
 
 const Profile = () => {
   const { userId } = useParams();
@@ -34,9 +35,10 @@ const Profile = () => {
     <>
       {loading ? <p>Loading...</p> : null}
       {userData ? (
-        <div>
+        <div className="p-4">
           <UserDetails user={userData} />
           <PastConcerts pastConcerts={userData.concerts} />
+          <FavoriteArtistsList artists={userData.favoriteArtists} />
         </div>
       ) : null}
     </>
@@ -87,6 +89,28 @@ const ConcertListElement = ({ concert }: { concert: Concert }) => {
       <p>{concert.venue.name}</p>
 
       <p>{formatDate(concert.eventDate)}</p>
+    </li>
+  );
+};
+
+const FavoriteArtistsList = ({ artists }: { artists: Array<Artist> }) => {
+  return (
+    <>
+      <h2 className="font-bold text-3xl">Favorite Artists</h2>
+      <ul className="flex flex-col">
+        {artists.map((artist) => (
+          <FavoriteArtistListItem key={artist.id} artist={artist} />
+        ))}
+      </ul>
+    </>
+  );
+};
+
+const FavoriteArtistListItem = ({ artist }: { artist: Artist }) => {
+  return (
+    <li>
+      <img src={artist.images[0].url ?? ""} alt={artist.name} />
+      <p>{artist.name}</p>
     </li>
   );
 };
