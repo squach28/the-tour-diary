@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
 type ArtistSearchResult = {
   offset: number;
@@ -74,7 +72,6 @@ const ArtistListItem = ({ artist }: { artist: Artist }) => {
             alt={artist.name}
           />
           <span className="text-center font-bold text-xl">{artist.name}</span>
-          <FontAwesomeIcon className="ml-auto" icon={faHeart} size="lg" />
         </div>
         <ul className="flex flex-wrap gap-2 py-2">
           {artist.genres.map((genre) => (
