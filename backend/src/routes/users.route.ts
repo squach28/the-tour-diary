@@ -22,4 +22,8 @@ usersRouter.get(
   getConcertByUserIdAndConcertId
 );
 usersRouter.post("/:userId/concerts", tokenMiddleware, addConcertToUser);
-usersRouter.delete("/:userId/concerts", tokenMiddleware, removeConcertFromUser);
+usersRouter.delete(
+  "/:userId/concerts/:concertId",
+  tokenMiddleware,
+  removeConcertFromUser
+);

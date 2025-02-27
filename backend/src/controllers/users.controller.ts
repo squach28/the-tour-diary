@@ -194,8 +194,7 @@ export const removeConcertFromUser = async (
 ) => {
   const client = await db.connect();
   try {
-    const { concertId } = req.body;
-    const { userId } = req.params;
+    const { userId, concertId } = req.params;
     if (concertId === undefined || userId === undefined) {
       res.status(400).json({ message: "Missing concertId and/or userId" });
       return;

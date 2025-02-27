@@ -44,9 +44,7 @@ const Concerts = () => {
     try {
       if (user) {
         if (concert.attended) {
-          await api.delete(`/users/${user.id}/concerts`, {
-            data: { concertId: concert.id },
-          });
+          await api.delete(`/users/${user.id}/concerts/${concert.id}`);
         } else {
           await api.post(`/users/${user.id}/concerts`, {
             data: { concertId: concert.id },
