@@ -6,6 +6,7 @@ interface RequestWithToken extends express.Request {
   user: User;
 }
 
+// middleware to check if token from user is valid
 export const tokenMiddleware = (
   req: RequestWithToken,
   res: express.Response,
@@ -13,6 +14,7 @@ export const tokenMiddleware = (
 ) => {
   try {
     const accessToken = req.cookies.accessToken;
+    // check user send a token through cookies
     if (accessToken === undefined) {
       res.status(401).json({ message: "Token is missing" });
       return;
@@ -23,6 +25,7 @@ export const tokenMiddleware = (
 
     next();
   } catch (e) {
+    // token isn't valid, send error message
     res.status(401).json({ message: "Invalid token" });
     return;
   }
