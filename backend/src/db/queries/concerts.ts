@@ -1,4 +1,6 @@
 export const queries = {
+  getConcertsByUserId:
+    "SELECT concert_id FROM user_concerts WHERE user_id = $1",
   getConcertByUserIdAndConcertId:
     "SELECT concert_id FROM user_concerts WHERE user_id = $1 AND concert_id = $2",
   getConcertByUserIdAndConcertIds:

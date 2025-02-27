@@ -28,7 +28,22 @@ export const getUserById = async (
       return;
     }
 
-    res.status(200).json(result.rows[0]);
+    const userResult = result.rows[0];
+
+    const concertsResult = await db.query(concertQueries.getConcertsByUserId, [
+      id,
+    ]);
+    const concertIds = concertsResult.rows.map((item) => item.concert_id);
+
+    const user = {
+      id: userResult.id,
+      firstName: userResult.first_name,
+      lastName: userResult.last_name,
+      email: userResult.email,
+      concertIds,
+    };
+
+    res.status(200).json(user);
     return;
   } catch (e) {
     console.log(e);
