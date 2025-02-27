@@ -10,6 +10,7 @@ interface RequestWithToken extends express.Request {
   user: User;
 }
 
+// GET - Get Concert By ID
 export const getConcertById = async (
   req: express.Request,
   res: express.Response
@@ -32,22 +33,7 @@ export const getConcertById = async (
   }
 };
 
-const didUserGoToConcerts = async (
-  userId: string,
-  concertIds: Array<string>
-): Promise<boolean | null> => {
-  try {
-    const result = await db.query(
-      concertQueries.getConcertByUserIdAndConcertIds,
-      [userId, concertIds]
-    );
-    const didUserGo = result.rowCount === 1;
-    return didUserGo;
-  } catch (e) {
-    return null;
-  }
-};
-
+// GET - Get Concerts By Artist ID
 export const getConcertsByArtistId = async (
   req: RequestWithToken,
   res: express.Response

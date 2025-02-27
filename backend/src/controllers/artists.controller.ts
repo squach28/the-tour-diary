@@ -15,6 +15,7 @@ interface RequestWithArtist extends RequestWithToken {
   artist: Artist;
 }
 
+// GET - Get Artist By ID
 export const getArtistById = async (
   req: RequestWithArtist,
   res: express.Response

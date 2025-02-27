@@ -1,6 +1,7 @@
 import express from "express";
 import { searchByArtistName } from "../utils/spotify";
 
+// GET - Search by Artist
 export const searchByArtist = async (
   req: express.Request,
   res: express.Response
