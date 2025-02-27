@@ -1,5 +1,6 @@
 import { tokenMiddleware } from "../middleware/jwtMiddleware";
 import {
+  addArtistToUserFavorites,
   addConcertToUser,
   deleteUserById,
   getConcertByUserIdAndConcertId,
@@ -27,3 +28,6 @@ usersRouter.delete(
   tokenMiddleware,
   removeConcertFromUser
 );
+
+// Artist related queries
+usersRouter.post("/:userId/artists", tokenMiddleware, addArtistToUserFavorites);

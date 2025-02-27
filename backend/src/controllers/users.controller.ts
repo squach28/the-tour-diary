@@ -3,6 +3,7 @@ import { db } from "../db/db";
 import { queries as userQueries } from "../db/queries/users";
 import { queries as authQueries } from "../db/queries/auth";
 import { queries as concertQueries } from "../db/queries/concerts";
+import { queries as artistQueries } from "../db/queries/artists";
 import validator from "validator";
 import { fetchConcertById } from "../utils/setlist";
 
@@ -235,6 +236,48 @@ export const removeConcertFromUser = async (
   } catch (e) {
     console.log(e);
     await db.query("ROLLBACK");
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  } finally {
+    client.release();
+  }
+};
+
+// Artist related queries
+
+export const addArtistToUserFavorites = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const client = await db.connect();
+  try {
+    const { userId } = req.params;
+    const { artistId } = req.body;
+    if (userId === undefined) {
+      res.status(400).json({ message: "Missing userId in path" });
+      return;
+    }
+
+    if (artistId === undefined) {
+      res.status(400).json({ message: "Missing artistId in body" });
+      return;
+    }
+
+    const result = await client.query(
+      artistQueries.insertArtistToUserFavorites,
+      [userId, artistId]
+    );
+    const response = {
+      id: result.rows[0].id,
+      userId,
+      artistId,
+    };
+
+    res.status(201).json(response);
+    return;
+  } catch (e) {
+    await client.query("ROLLBACK");
+    console.log(e);
     res.status(500).json({ message: "Something went wrong" });
     return;
   } finally {
