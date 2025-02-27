@@ -108,13 +108,15 @@ const FutureConcerts = ({
     <>
       <h2 className="text-2xl font-bold py-2">Future Concerts</h2>
       {futureConcerts.length > 0 ? (
-        <ul>
-          {futureConcerts.map((concert) => (
-            <li key={concert.id}>{concert.id}</li>
-          ))}
-        </ul>
+        <>
+          <ul className="flex flex-nowrap gap-8 overflow-x-scroll">
+            {futureConcerts.map((concert) => (
+              <ConcertListElement key={concert.id} concert={concert} />
+            ))}
+          </ul>
+        </>
       ) : (
-        <p>No upcoming concerts</p>
+        <p>No concerts yet performed by artist</p>
       )}
     </>
   );
