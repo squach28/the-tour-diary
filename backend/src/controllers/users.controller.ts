@@ -4,6 +4,7 @@ import { queries as userQueries } from "../db/queries/users";
 import { queries as authQueries } from "../db/queries/auth";
 import { queries as concertQueries } from "../db/queries/concerts";
 import validator from "validator";
+import { fetchConcertById } from "../utils/setlist";
 
 export const getUserById = async (
   req: express.Request,
@@ -35,12 +36,18 @@ export const getUserById = async (
     ]);
     const concertIds = concertsResult.rows.map((item) => item.concert_id);
 
+    const fetchDataForConcerts = concertIds
+      .map((id) => fetchConcertById(id))
+      .slice(0, 5);
+
+    const concerts = await Promise.all(fetchDataForConcerts);
+
     const user = {
       id: userResult.id,
       firstName: userResult.first_name,
       lastName: userResult.last_name,
       email: userResult.email,
-      concertIds,
+      concerts,
     };
 
     res.status(200).json(user);
