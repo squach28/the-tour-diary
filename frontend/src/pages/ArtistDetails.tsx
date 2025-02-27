@@ -116,7 +116,7 @@ const FutureConcerts = ({
           </ul>
         </>
       ) : (
-        <p>No concerts yet performed by artist</p>
+        <p>No upcoming concerts</p>
       )}
     </>
   );
