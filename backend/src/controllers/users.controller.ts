@@ -8,17 +8,20 @@ import validator from "validator";
 import { fetchConcertById } from "../utils/setlist";
 import { fetchArtistById } from "../utils/spotify";
 
+// GET - Get User By ID
 export const getUserById = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     const { id } = req.params;
+    // id not provided in params
     if (id === undefined) {
       res.status(400).json({ message: "ID is missing" });
       return;
     }
 
+    // id is not a valid UUID
     if (!validator.isUUID(id)) {
       res.status(400).json({ message: "ID is not a valid UUID" });
       return;
@@ -26,6 +29,7 @@ export const getUserById = async (
 
     const result = await db.query(userQueries.getUserById, [id]);
 
+    // row length == 0 -> user with id doesn't exist
     if (result.rows.length === 0) {
       res.status(404).json({ message: "User with id doesn't exist" });
       return;
@@ -33,17 +37,19 @@ export const getUserById = async (
 
     const userResult = result.rows[0];
 
+    // get all the concerts that the user has been to
     const concertsResult = await db.query(concertQueries.getConcertsByUserId, [
       id,
     ]);
     const concertIds = concertsResult.rows.map((item) => item.concert_id);
 
     const fetchDataForConcerts = concertIds
-      .slice(0, 5)
+      .slice(0, 5) // limit result to 5 concerts
       .map((id) => fetchConcertById(id));
 
     const concerts = await Promise.all(fetchDataForConcerts);
 
+    // get all the artists that the user favorited
     const favoriteArtistsResult = await db.query(
       artistQueries.getFavoriteArtistsByUserId,
       [id]
@@ -54,11 +60,12 @@ export const getUserById = async (
     );
 
     const fetchDataForFavoriteArtists = favoriteArtistsIds
-      .slice(0, 5)
+      .slice(0, 5) // limit result to 5 artists
       .map((id) => fetchArtistById(id));
 
     const favoriteArtists = await Promise.all(fetchDataForFavoriteArtists);
 
+    // create object with user details, including concerts and favoriteArtists
     const user = {
       id: userResult.id,
       firstName: userResult.first_name,
@@ -77,6 +84,7 @@ export const getUserById = async (
   }
 };
 
+// PUT - Update User By ID
 export const updateUserById = async (
   req: express.Request,
   res: express.Response
@@ -127,6 +135,7 @@ export const updateUserById = async (
   }
 };
 
+// DELETE - Delete User By ID
 export const deleteUserById = async (
   req: express.Request,
   res: express.Response
@@ -164,6 +173,7 @@ export const deleteUserById = async (
 
 // Concert related queries
 
+// GET - Concert By User ID And Concert ID
 export const getConcertByUserIdAndConcertId = async (
   req: express.Request,
   res: express.Response
@@ -195,6 +205,7 @@ export const getConcertByUserIdAndConcertId = async (
   }
 };
 
+// POST - Add Concert to User's List
 export const addConcertToUser = async (
   req: express.Request,
   res: express.Response
@@ -228,6 +239,7 @@ export const addConcertToUser = async (
   }
 };
 
+// DELETE - Delete Concert From User's List
 export const removeConcertFromUser = async (
   req: express.Request,
   res: express.Response
@@ -262,6 +274,7 @@ export const removeConcertFromUser = async (
 
 // Artist related queries
 
+// POST - Add Artist to User's Favorites
 export const addArtistToUserFavorites = async (
   req: express.Request,
   res: express.Response
@@ -302,6 +315,7 @@ export const addArtistToUserFavorites = async (
   }
 };
 
+// DELETE - Remove Artist From User's Favorites
 export const removeArtistFromUserFavorites = async (
   req: express.Request,
   res: express.Response

@@ -10,6 +10,7 @@ import {
   verifyRefreshToken,
 } from "../utils/jwt";
 
+// POST - Sign Up
 export const signup = async (req: express.Request, res: express.Response) => {
   const client = await db.connect();
   try {
@@ -55,6 +56,7 @@ export const signup = async (req: express.Request, res: express.Response) => {
   }
 };
 
+// POST - Log In
 export const login = async (req: express.Request, res: express.Response) => {
   const { email, password } = req.body;
   if (email === undefined || password === undefined) {
@@ -103,6 +105,7 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
 };
 
+// POST - Log out
 export const logout = (req: express.Request, res: express.Response) => {
   try {
     res.clearCookie("accessToken");
@@ -115,6 +118,7 @@ export const logout = (req: express.Request, res: express.Response) => {
   }
 };
 
+// GET - Check Auth
 export const checkAuth = (req: express.Request, res: express.Response) => {
   try {
     const token = req.cookies.accessToken;
@@ -133,6 +137,7 @@ export const checkAuth = (req: express.Request, res: express.Response) => {
   }
 };
 
+// POST - Refresh Token
 export const refresh = (req: express.Request, res: express.Response) => {
   try {
     const token = req.cookies.refreshToken;

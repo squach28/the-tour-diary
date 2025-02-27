@@ -9,6 +9,7 @@ interface RequestWithArtist extends express.Request {
   artist: Artist;
 }
 
+// middleware to add artist spotify id and artist mbid to database
 export const artistMiddleware = async (
   req: RequestWithArtist,
   res: express.Response,
@@ -16,7 +17,7 @@ export const artistMiddleware = async (
 ) => {
   try {
     const { id } = req.params;
-    const artist = await fetchArtistById(id);
+    const artist = await fetchArtistById(id); // fetch artist from spotify api
     const artistExists = await db.query(artistQueries.getArtistBySpotifyId, [
       id,
     ]);
