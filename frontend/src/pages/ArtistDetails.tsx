@@ -6,7 +6,9 @@ import { Track } from "../types/Track";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Concert } from "../types/Concert";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as filledHeart } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../context/AuthContext";
 
 const ArtistDetails = () => {
   const params = useParams();
@@ -15,6 +17,7 @@ const ArtistDetails = () => {
     topSongs: Array<Track>;
     futureConcerts: Array<Concert>;
     pastConcerts: Array<Concert>;
+    favorite: boolean;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -53,12 +56,15 @@ const ArtistDetails = () => {
               onClick={() => navigateBack()}
               icon={faArrowLeft}
             />
-            <FontAwesomeIcon size="xl" icon={faHeart} />
+            <FavoriteIcon
+              favorite={artistDetails.favorite}
+              artistId={artistDetails.artist.id}
+            />
           </div>
           <img
             className="w-1/2 h-1/2 rounded-full mx-auto p-4"
             src={artistDetails.artist.images[0].url}
-            alt=""
+            alt={artistDetails.artist.name}
           />
           <div className="text-center">
             <h1 className="text-center text-3xl font-bold">
@@ -79,6 +85,54 @@ const ArtistDetails = () => {
         </div>
       ) : null}
     </>
+  );
+};
+
+const FavoriteIcon = ({
+  favorite,
+  artistId,
+}: {
+  favorite: boolean;
+  artistId: string;
+}) => {
+  const [isFavorite, setIsFavorite] = useState(favorite);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+
+  const handleFavoriteClicked = async () => {
+    try {
+      if (loading) {
+        return;
+      }
+      setLoading(true);
+      if (user === null) {
+        return;
+      }
+      if (favorite) {
+        await api.delete(`/users/${user.id}/artists/${artistId}`);
+        setIsFavorite((prev) => !prev);
+      } else {
+        await api.post(`/users/${user.id}/artists`, {
+          artistId,
+        });
+        setIsFavorite((prev) => !prev);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <FontAwesomeIcon
+      className={`transition-transform duration-300 ${
+        isFavorite ? " text-red-500 scale-125" : "text-black scale-100"
+      }`}
+      size="xl"
+      icon={isFavorite ? filledHeart : emptyHeart}
+      onClick={handleFavoriteClicked}
+    />
   );
 };
 
