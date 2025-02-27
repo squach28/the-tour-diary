@@ -5,7 +5,7 @@ import { Artist } from "../types/Artist";
 import { Track } from "../types/Track";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Concert, Song } from "../types/Concert";
+import { Concert } from "../types/Concert";
 
 const ArtistDetails = () => {
   const params = useParams();
