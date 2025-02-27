@@ -3,7 +3,10 @@ import { db } from "../db/db";
 import { queries as userQueries } from "../db/queries/users";
 import { queries as authQueries } from "../db/queries/auth";
 import { queries as concertQueries } from "../db/queries/concerts";
+import { queries as artistQueries } from "../db/queries/artists";
 import validator from "validator";
+import { fetchConcertById } from "../utils/setlist";
+import { fetchArtistById } from "../utils/spotify";
 
 export const getUserById = async (
   req: express.Request,
@@ -28,7 +31,44 @@ export const getUserById = async (
       return;
     }
 
-    res.status(200).json(result.rows[0]);
+    const userResult = result.rows[0];
+
+    const concertsResult = await db.query(concertQueries.getConcertsByUserId, [
+      id,
+    ]);
+    const concertIds = concertsResult.rows.map((item) => item.concert_id);
+
+    const fetchDataForConcerts = concertIds
+      .slice(0, 5)
+      .map((id) => fetchConcertById(id));
+
+    const concerts = await Promise.all(fetchDataForConcerts);
+
+    const favoriteArtistsResult = await db.query(
+      artistQueries.getFavoriteArtistsByUserId,
+      [id]
+    );
+
+    const favoriteArtistsIds = favoriteArtistsResult.rows.map(
+      (artist) => artist.artist_id
+    );
+
+    const fetchDataForFavoriteArtists = favoriteArtistsIds
+      .slice(0, 5)
+      .map((id) => fetchArtistById(id));
+
+    const favoriteArtists = await Promise.all(fetchDataForFavoriteArtists);
+
+    const user = {
+      id: userResult.id,
+      firstName: userResult.first_name,
+      lastName: userResult.last_name,
+      email: userResult.email,
+      concerts,
+      favoriteArtists,
+    };
+
+    res.status(200).json(user);
     return;
   } catch (e) {
     console.log(e);
@@ -208,7 +248,79 @@ export const removeConcertFromUser = async (
       [userId, concertId]
     );
     const concert = result.rows[0];
-    res.status(201).json(concert);
+    res.status(200).json(concert);
+    return;
+  } catch (e) {
+    console.log(e);
+    await db.query("ROLLBACK");
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  } finally {
+    client.release();
+  }
+};
+
+// Artist related queries
+
+export const addArtistToUserFavorites = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const client = await db.connect();
+  try {
+    const { userId } = req.params;
+    const { artistId } = req.body;
+    if (userId === undefined) {
+      res.status(400).json({ message: "Missing userId in path" });
+      return;
+    }
+
+    if (artistId === undefined) {
+      res.status(400).json({ message: "Missing artistId in body" });
+      return;
+    }
+
+    const result = await client.query(
+      artistQueries.insertArtistToUserFavorites,
+      [userId, artistId]
+    );
+    const response = {
+      id: result.rows[0].id,
+      userId,
+      artistId,
+    };
+
+    res.status(201).json(response);
+    return;
+  } catch (e) {
+    await client.query("ROLLBACK");
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  } finally {
+    client.release();
+  }
+};
+
+export const removeArtistFromUserFavorites = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const client = await db.connect();
+  try {
+    const { userId, artistId } = req.params;
+    if (artistId === undefined || userId === undefined) {
+      res.status(400).json({ message: "Missing artistId and/or userId" });
+      return;
+    }
+
+    await db.query(artistQueries.removeArtistFromUserFavorites, [
+      userId,
+      artistId,
+    ]);
+
+    await client.query("COMMIT");
+    res.status(204).send();
     return;
   } catch (e) {
     console.log(e);

@@ -5,7 +5,7 @@ import { Artist } from "../types/Artist";
 import { Track } from "../types/Track";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Concert } from "../types/Concert";
+import { Concert, Song } from "../types/Concert";
 
 const ArtistDetails = () => {
   const params = useParams();
@@ -65,25 +65,7 @@ const ArtistDetails = () => {
               ))}
             </ul>
           </div>
-          <h2 className="text-2xl font-bold">Top Songs</h2>
-          <ol className="flex flex-col gap-2 mt-4 list-decimal list-outside">
-            {artistDetails.topSongs.map((song, index) => (
-              <li
-                className="flex gap-4 items-center p-2 border border-gray-300 shadow-md rounded-md"
-                key={song.id}
-              >
-                <p className="text-lg font-bold">{index + 1}</p>
-                <img
-                  width="48"
-                  height="48"
-                  className="rounded-lg"
-                  src={song.album.images[0].url}
-                  alt={song.album.name}
-                />
-                <p>{song.name}</p>
-              </li>
-            ))}
-          </ol>
+          <TopSongsList tracks={artistDetails.topSongs} />
           <FutureConcerts futureConcerts={artistDetails.futureConcerts} />
           <PastConcerts
             pastConcerts={artistDetails.pastConcerts}
@@ -92,6 +74,35 @@ const ArtistDetails = () => {
         </div>
       ) : null}
     </>
+  );
+};
+
+const TopSongsList = ({ tracks }: { tracks: Array<Track> }) => {
+  return (
+    <>
+      <h2 className="text-2xl font-bold">Top Songs</h2>
+      <ol className="flex flex-col gap-2 mt-4 list-decimal list-outside">
+        {tracks.map((track, rank) => (
+          <TopSongListItem key={track.id} track={track} rank={rank} />
+        ))}
+      </ol>
+    </>
+  );
+};
+
+const TopSongListItem = ({ track, rank }: { track: Track; rank: number }) => {
+  return (
+    <li className="flex gap-4 items-center p-2 border border-gray-300 shadow-md rounded-md">
+      <p className="text-lg font-bold">{rank + 1}</p>
+      <img
+        width="48"
+        height="48"
+        className="rounded-lg"
+        src={track.album.images[0].url}
+        alt={track.album.name}
+      />
+      <p>{track.name}</p>
+    </li>
   );
 };
 
@@ -134,7 +145,7 @@ const PastConcerts = ({
       <h2 className="text-2xl font-bold py-2">Past Concerts</h2>
       {pastConcerts.length > 0 ? (
         <>
-          <ul className="flex flex-nowrap gap-8 overflow-x-scroll">
+          <ul className="flex flex-nowrap gap-8 overflow-x-scroll snap-x">
             {pastConcerts.map((concert) => (
               <ConcertListElement key={concert.id} concert={concert} />
             ))}
@@ -155,7 +166,7 @@ const ConcertListElement = ({ concert }: { concert: Concert }) => {
     return formattedDate.toLocaleDateString("en-US");
   };
   return (
-    <li className="flex flex-col justify-center items-center gap-2 min-w-1/2 min-h-36 shadow-md p-2 text-center my-4">
+    <li className="flex flex-col justify-center items-center gap-2 min-w-1/2 min-h-36 shadow-md p-2 text-center my-4 snap-center">
       <div>
         <span>{concert.venue.city.name}, </span>
         <span>{concert.venue.city.country.name}</span>

@@ -1,9 +1,11 @@
 import { tokenMiddleware } from "../middleware/jwtMiddleware";
 import {
+  addArtistToUserFavorites,
   addConcertToUser,
   deleteUserById,
   getConcertByUserIdAndConcertId,
   getUserById,
+  removeArtistFromUserFavorites,
   removeConcertFromUser,
   updateUserById,
 } from "../controllers/users.controller";
@@ -26,4 +28,12 @@ usersRouter.delete(
   "/:userId/concerts/:concertId",
   tokenMiddleware,
   removeConcertFromUser
+);
+
+// Artist related queries
+usersRouter.post("/:userId/artists", tokenMiddleware, addArtistToUserFavorites);
+usersRouter.delete(
+  "/:userId/artists/:artistId",
+  tokenMiddleware,
+  removeArtistFromUserFavorites
 );
