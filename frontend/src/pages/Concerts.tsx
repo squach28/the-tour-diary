@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Concert } from "../types/Concert";
 import api from "../api/api";
+import { useAuth } from "../context/AuthContext";
 
 type ConcertsResponse = {
   itemsPerPage: number;
@@ -49,11 +50,36 @@ const Concerts = () => {
 };
 
 const ConcertListElement = ({ concert }: { concert: Concert }) => {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
+
   const formatDate = (date: string) => {
     const [day, month, year] = date.split("-");
     const formattedDate = new Date(Number(year), Number(month), Number(day));
     return formattedDate.toLocaleDateString("en-US");
   };
+
+  const handleAttendedClicked = () => {
+    try {
+      setLoading(true);
+      if (user) {
+        if (concert.attended) {
+          api.delete(`/users/${user.id}/concerts`, {
+            data: { concertId: concert.id },
+          });
+        } else {
+          api.post(`/users/${user.id}/concerts`, {
+            data: { concertId: concert.id },
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <li className="flex flex-col justify-center items-center gap-2 min-w-1/2 min-h-36 shadow-md p-2 text-center my-4">
       <div>
@@ -63,15 +89,14 @@ const ConcertListElement = ({ concert }: { concert: Concert }) => {
       <p>{concert.venue.name}</p>
 
       <p>{formatDate(concert.eventDate)}</p>
-      {concert.attended ? (
-        <button className="px-4 py-3 border-1 border-green-500 rounded-md hover:shadow-md hover:cursor-pointer">
-          Attended
-        </button>
-      ) : (
-        <button className="px-4 py-3 border-1 rounded-md hover:shadow-md hover:cursor-pointer">
-          Didn't attend
-        </button>
-      )}
+      <button
+        className={`px-4 py-3 border-1 rounded-md hover:shadow-md hover:cursor-pointer`}
+        onClick={handleAttendedClicked}
+        disabled={loading}
+      >
+        {concert.attended && !loading ? "Attended" : "Didn't attend"}
+        {loading ? "Loading..." : null}
+      </button>
     </li>
   );
 };

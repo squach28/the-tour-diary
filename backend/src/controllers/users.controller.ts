@@ -161,7 +161,7 @@ export const addConcertToUser = async (
 ) => {
   const client = await db.connect();
   try {
-    const { concertId } = req.body;
+    const { concertId } = req.body.data;
     const { userId } = req.params;
     if (concertId === undefined || userId === undefined) {
       res.status(400).json({ message: "Missing concertId and/or userId" });
@@ -171,7 +171,12 @@ export const addConcertToUser = async (
     await db.query(concertQueries.insertConcertByUserId, [userId, concertId]);
 
     await client.query("COMMIT");
-    res.status(201).json({ message: "Success" });
+    const result = await db.query(
+      concertQueries.getConcertByUserIdAndConcertId,
+      [userId, concertId]
+    );
+    const concert = result.rows[0];
+    res.status(201).json(concert);
     return;
   } catch (e) {
     console.log(e);
@@ -199,7 +204,12 @@ export const removeConcertFromUser = async (
     await db.query(concertQueries.deleteConcertByUserId, [userId, concertId]);
 
     await client.query("COMMIT");
-    res.status(201).json({ message: "Success" });
+    const result = await db.query(
+      concertQueries.getConcertByUserIdAndConcertId,
+      [userId, concertId]
+    );
+    const concert = result.rows[0];
+    res.status(201).json(concert);
     return;
   } catch (e) {
     console.log(e);
