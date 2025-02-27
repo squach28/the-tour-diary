@@ -284,3 +284,33 @@ export const addArtistToUserFavorites = async (
     client.release();
   }
 };
+
+export const removeArtistFromUserFavorites = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const client = await db.connect();
+  try {
+    const { userId, artistId } = req.params;
+    if (artistId === undefined || userId === undefined) {
+      res.status(400).json({ message: "Missing artistId and/or userId" });
+      return;
+    }
+
+    await db.query(artistQueries.removeArtistFromUserFavorites, [
+      userId,
+      artistId,
+    ]);
+
+    await client.query("COMMIT");
+    res.status(204).send();
+    return;
+  } catch (e) {
+    console.log(e);
+    await db.query("ROLLBACK");
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  } finally {
+    client.release();
+  }
+};

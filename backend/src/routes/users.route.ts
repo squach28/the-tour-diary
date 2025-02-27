@@ -5,6 +5,7 @@ import {
   deleteUserById,
   getConcertByUserIdAndConcertId,
   getUserById,
+  removeArtistFromUserFavorites,
   removeConcertFromUser,
   updateUserById,
 } from "../controllers/users.controller";
@@ -31,3 +32,8 @@ usersRouter.delete(
 
 // Artist related queries
 usersRouter.post("/:userId/artists", tokenMiddleware, addArtistToUserFavorites);
+usersRouter.delete(
+  "/:userId/artists/:artistId",
+  tokenMiddleware,
+  removeArtistFromUserFavorites
+);

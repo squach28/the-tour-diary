@@ -3,4 +3,6 @@ export const queries = {
   insertArtist: "INSERT INTO artists (spotify_id, mbid) VALUES ($1, $2)",
   insertArtistToUserFavorites:
     "INSERT INTO user_artists (user_id, artist_id) VALUES ($1, $2) RETURNING id",
+  removeArtistFromUserFavorites:
+    "DELETE FROM user_artists WHERE user_id = $1 and artist_id = $2",
 };
