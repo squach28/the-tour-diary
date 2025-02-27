@@ -124,6 +124,37 @@ export const deleteUserById = async (
 
 // Concert related queries
 
+export const getConcertByUserIdAndConcertId = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { userId, concertId } = req.params;
+
+  if (userId === undefined || concertId === undefined) {
+    res.status(400).json({ message: "Missing userId and/or concertId" });
+    return;
+  }
+
+  if (!validator.isUUID(userId)) {
+    res.status(400).json({ message: "userId is not a valid UUID" });
+    return;
+  }
+
+  try {
+    const result = await db.query(
+      concertQueries.getConcertByUserIdAndConcertId,
+      [userId, concertId]
+    );
+    const row = result.rows[0];
+
+    res.status(200).json({ concert: row ?? null });
+    return;
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
 export const addConcertToUser = async (
   req: express.Request,
   res: express.Response

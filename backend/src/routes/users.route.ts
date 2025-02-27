@@ -2,6 +2,7 @@ import { tokenMiddleware } from "../middleware/jwtMiddleware";
 import {
   addConcertToUser,
   deleteUserById,
+  getConcertByUserIdAndConcertId,
   getUserById,
   removeConcertFromUser,
   updateUserById,
@@ -15,5 +16,10 @@ usersRouter.put("/:id", tokenMiddleware, updateUserById);
 usersRouter.delete("/:id", tokenMiddleware, deleteUserById);
 
 // Concert related endpoints
+usersRouter.get(
+  "/:userId/concerts/:concertId",
+  tokenMiddleware,
+  getConcertByUserIdAndConcertId
+);
 usersRouter.post("/:userId/concerts", tokenMiddleware, addConcertToUser);
 usersRouter.delete("/:userId/concerts", tokenMiddleware, removeConcertFromUser);
