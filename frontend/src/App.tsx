@@ -12,6 +12,7 @@ import ProtectedLayout from "./layouts/ProtectedLayout";
 import Search from "./pages/Search";
 import ArtistDetails from "./pages/ArtistDetails";
 import Concerts from "./pages/Concerts";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -32,6 +33,8 @@ const App = () => {
               <Route path="concerts" element={<Concerts />}></Route>
             </Route>
           </Route>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
         </Route>
       </Route>
 

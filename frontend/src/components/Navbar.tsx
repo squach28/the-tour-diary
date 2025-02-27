@@ -12,7 +12,7 @@ const Navbar = () => {
     navigate("/", { replace: true });
   };
 
-  const toggleExtendedMenu = () => {
+  const toggleSideNavBar = () => {
     setShowSideNavBar((prev) => !prev);
   };
 
@@ -23,7 +23,7 @@ const Navbar = () => {
           <Link to="/">the tour diary</Link>
         </li>
         {isAuthenticated && user ? (
-          <li className="ml-auto" onClick={toggleExtendedMenu}>
+          <li className="ml-auto" onClick={toggleSideNavBar}>
             {user.id.slice(0, 5)}
           </li>
         ) : (
@@ -35,15 +35,24 @@ const Navbar = () => {
       {showSideNavBar ? (
         <div
           className="fixed h-full inset-0 bg-black opacity-75 transition-all duration-500 z-1"
-          onClick={toggleExtendedMenu}
+          onClick={toggleSideNavBar}
         ></div>
       ) : null}
-      <SideNavBar showSideNavBar={showSideNavBar} />
+      <SideNavBar
+        showSideNavBar={showSideNavBar}
+        toggleSideNavBar={toggleSideNavBar}
+      />
     </nav>
   );
 };
 
-const SideNavBar = ({ showSideNavBar }: { showSideNavBar: boolean }) => {
+const SideNavBar = ({
+  showSideNavBar,
+  toggleSideNavBar,
+}: {
+  showSideNavBar: boolean;
+  toggleSideNavBar: () => void;
+}) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -57,8 +66,12 @@ const SideNavBar = ({ showSideNavBar }: { showSideNavBar: boolean }) => {
         showSideNavBar ? "translate-x-0" : "translate-x-full"
       } text-center`}
     >
-      <li>{user ? user.id.slice(0, 5) : "Loading..."}</li>
-      <li>Profile</li>
+      <li>{user ? `Hi, ${user.id.slice(0, 5)}!` : "Loading..."}</li>
+      <li>
+        <Link to="/profile" onClick={toggleSideNavBar}>
+          Profile
+        </Link>
+      </li>
       <li onClick={handleLogout}>Log out</li>
     </ul>
   );
