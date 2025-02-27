@@ -92,7 +92,10 @@ const SignupForm = () => {
   };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit(submitForm)}>
+    <form
+      className="max-w-lg mx-auto flex flex-col gap-4 md:shadow-lg md:p-8 md:mt-16"
+      onSubmit={handleSubmit(submitForm)}
+    >
       <h1 className="text-2xl">Welcome!</h1>
       <div>
         <label className="block mb-1 font-bold" htmlFor="firstName">
@@ -193,7 +196,7 @@ const SignupForm = () => {
         <p className="mt-1 text-red-500 font-bold text-sm">{error}</p>
       ) : null}
       <button
-        className="bg-blue-500 text-white p-2 rounded-md"
+        className="bg-blue-500 text-white p-2 rounded-md cursor-pointer"
         type="submit"
         disabled={isSubmitting}
       >

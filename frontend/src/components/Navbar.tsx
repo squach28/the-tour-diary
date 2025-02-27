@@ -17,7 +17,10 @@ const Navbar = () => {
           <Link to="/">the tour diary</Link>
         </li>
         {isAuthenticated && user ? (
-          <li className="ml-auto" onClick={toggleSideNavBar}>
+          <li
+            className="ml-auto hover:cursor-pointer"
+            onClick={toggleSideNavBar}
+          >
             {user.id.slice(0, 5)}
           </li>
         ) : (
@@ -56,7 +59,7 @@ const SideNavBar = ({
   };
   return (
     <ul
-      className={`w-1/3 h-full fixed top-0 right-0 p-4 bg-white shadow-md z-1 transition-transform duration-300 ${
+      className={`w-1/4 h-full fixed top-0 right-0 p-4 bg-white shadow-md z-1 transition-transform duration-300 ${
         showSideNavBar ? "translate-x-0" : "translate-x-full"
       } text-center`}
     >
@@ -66,7 +69,9 @@ const SideNavBar = ({
           Profile
         </Link>
       </li>
-      <li onClick={handleLogout}>Log out</li>
+      <li className="cursor-pointer" onClick={handleLogout}>
+        Log out
+      </li>
     </ul>
   );
 };
