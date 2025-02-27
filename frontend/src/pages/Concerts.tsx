@@ -3,6 +3,8 @@ import { useParams } from "react-router";
 import { Concert } from "../types/Concert";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faX, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 type ConcertsResponse = {
   itemsPerPage: number;
@@ -16,6 +18,8 @@ const Concerts = () => {
   const params = useParams();
   const [concerts, setConcerts] = useState<Array<Concert>>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
   useEffect(() => {
     const fetchConcertsByArtistId = async (artistId: string) => {
       try {
@@ -35,13 +39,42 @@ const Concerts = () => {
       fetchConcertsByArtistId(id);
     }
   }, []);
+
+  const toggleConcertAttendance = async (concert: Concert) => {
+    try {
+      if (user) {
+        if (concert.attended) {
+          await api.delete(`/users/${user.id}/concerts`, {
+            data: { concertId: concert.id },
+          });
+        } else {
+          await api.post(`/users/${user.id}/concerts`, {
+            data: { concertId: concert.id },
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setConcerts((prev) =>
+        prev.map((item) =>
+          item.id === concert.id ? { ...item, attended: !item.attended } : item
+        )
+      );
+    }
+  };
+
   return (
     <>
       {loading ? <p>Loading...</p> : null}
       {concerts ? (
         <ul>
           {concerts.map((concert) => (
-            <ConcertListElement key={concert.id} concert={concert} />
+            <ConcertListElement
+              key={concert.id}
+              concert={concert}
+              toggleConcertAttendance={toggleConcertAttendance}
+            />
           ))}
         </ul>
       ) : null}
@@ -49,8 +82,13 @@ const Concerts = () => {
   );
 };
 
-const ConcertListElement = ({ concert }: { concert: Concert }) => {
-  const { user } = useAuth();
+const ConcertListElement = ({
+  concert,
+  toggleConcertAttendance,
+}: {
+  concert: Concert;
+  toggleConcertAttendance: (concert: Concert) => void;
+}) => {
   const [loading, setLoading] = useState(false);
 
   const formatDate = (date: string) => {
@@ -59,20 +97,10 @@ const ConcertListElement = ({ concert }: { concert: Concert }) => {
     return formattedDate.toLocaleDateString("en-US");
   };
 
-  const handleAttendedClicked = () => {
+  const handleMarkAttendanceClicked = () => {
     try {
       setLoading(true);
-      if (user) {
-        if (concert.attended) {
-          api.delete(`/users/${user.id}/concerts`, {
-            data: { concertId: concert.id },
-          });
-        } else {
-          api.post(`/users/${user.id}/concerts`, {
-            data: { concertId: concert.id },
-          });
-        }
-      }
+      toggleConcertAttendance(concert);
     } catch (e) {
       console.log(e);
     } finally {
@@ -89,13 +117,28 @@ const ConcertListElement = ({ concert }: { concert: Concert }) => {
       <p>{concert.venue.name}</p>
 
       <p>{formatDate(concert.eventDate)}</p>
+      <div className="flex gap-2 items-center">
+        <FontAwesomeIcon
+          className={`${concert.attended ? "text-green-500" : "text-red-500"}`}
+          icon={concert.attended ? faCheck : faX}
+          size="lg"
+        />
+        <span
+          className={`rounded-md hover:shadow-md hover:cursor-pointer ${
+            concert.attended ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {concert.attended && !loading ? "Attended" : "Didn't attend"}
+        </span>
+      </div>
       <button
-        className={`px-4 py-3 border-1 rounded-md hover:shadow-md hover:cursor-pointer`}
-        onClick={handleAttendedClicked}
+        className={`px-6 py-3 ${
+          concert.attended ? "bg-red-400" : "bg-blue-400"
+        } text-white rounded-md font-bold`}
         disabled={loading}
+        onClick={handleMarkAttendanceClicked}
       >
-        {concert.attended && !loading ? "Attended" : "Didn't attend"}
-        {loading ? "Loading..." : null}
+        {concert.attended ? "Mark as not attended" : "Mark as attended"}
       </button>
     </li>
   );
