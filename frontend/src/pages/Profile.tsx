@@ -37,6 +37,7 @@ const Profile = () => {
       {userData ? (
         <div className="p-4">
           <UserDetails user={userData} />
+          <UserStats user={userData} />
           <PastConcerts pastConcerts={userData.concerts} />
           <FavoriteArtistsList artists={userData.favoriteArtists} />
         </div>
@@ -52,6 +53,22 @@ const UserDetails = ({ user }: { user: User }) => {
         {user.firstName} {user.lastName}
       </span>
     </div>
+  );
+};
+
+const UserStats = ({ user }: { user: User }) => {
+  const artistsSeen = new Set();
+  user.concerts.forEach((concert) => {
+    artistsSeen.add(concert.artist.id);
+  });
+  return (
+    <>
+      <h2 className="text-2xl font-bold">tl; dr</h2>
+      <ul>
+        <li>Concerts Attended: {user.concerts.length}</li>
+        <li>Artists Seen: {artistsSeen.size}</li>
+      </ul>
+    </>
   );
 };
 
