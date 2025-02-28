@@ -28,7 +28,7 @@ const SearchBar = () => {
         type="text"
         onChange={(e) => setQuery(e.target.value)}
         value={query}
-        placeholder="Search for an artist"
+        placeholder="Search for a user or artist"
       />
       <button className="bg-green-400 w-16 border border-l-red-200 rounded-md rounded-l-none cursor-pointer hover:bg-green-600">
         <FontAwesomeIcon icon={faSearch} />
