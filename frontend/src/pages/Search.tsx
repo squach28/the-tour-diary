@@ -43,7 +43,7 @@ const Search = () => {
           Results for: {query}
         </h1>
         {loading ? <p>Loading...</p> : null}
-        <ul className="max-w-5xl mx-auto grid grid-cols-1 place-items-center pt-4 gap-10 md:grid-cols-2">
+        <ul className="max-w-2xl mx-auto grid grid-cols-1 place-items-center pt-4 gap-10">
           {searchResult
             ? searchResult.artists.map((artist) => (
                 <ArtistListItem key={artist.id} artist={artist} />

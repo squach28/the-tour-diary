@@ -37,10 +37,10 @@ export const authorizeUserMiddleware = (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const userId = req.user.id;
-  const { userIdFromParam } = req.params;
+  const userIdFromToken = req.user.id;
+  const { userId } = req.params;
 
-  if (userId !== userIdFromParam) {
+  if (userId !== userIdFromToken) {
     res.status(403).json({ message: "Forbidden" });
     return;
   }
