@@ -59,7 +59,7 @@ const SideNavBar = ({
   };
   return (
     <ul
-      className={`min-w-48 w-1/4 max-w-72 h-full fixed top-0 right-0 p-4 bg-white shadow-md z-1 transition-transform duration-300 ${
+      className={`min-w-48 w-1/4 max-w-72 h-full fixed flex flex-col top-0 right-0 p-4 bg-white shadow-md z-1 transition-transform duration-300 ${
         showSideNavBar ? "translate-x-0" : "translate-x-full"
       } text-center`}
     >
@@ -69,7 +69,10 @@ const SideNavBar = ({
           Profile
         </Link>
       </li>
-      <li className="cursor-pointer" onClick={handleLogout}>
+      <li
+        className="cursor-pointer mt-auto bg-red-500 text-white font-bold rounded-sm px-4 py-2"
+        onClick={handleLogout}
+      >
         Log out
       </li>
     </ul>
