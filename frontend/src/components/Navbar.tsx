@@ -59,7 +59,7 @@ const SideNavBar = ({
   };
   return (
     <ul
-      className={`w-1/4 h-full fixed top-0 right-0 p-4 bg-white shadow-md z-1 transition-transform duration-300 ${
+      className={`min-w-48 w-1/4 max-w-72 h-full fixed top-0 right-0 p-4 bg-white shadow-md z-1 transition-transform duration-300 ${
         showSideNavBar ? "translate-x-0" : "translate-x-full"
       } text-center`}
     >

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 
 const Dashboard = () => {
   return (
-    <div>
+    <div className="max-w-lg mx-auto">
       <ArtistSearch />
     </div>
   );
