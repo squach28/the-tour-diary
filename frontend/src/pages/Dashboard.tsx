@@ -6,12 +6,12 @@ import { useNavigate } from "react-router";
 const Dashboard = () => {
   return (
     <div className="max-w-lg mx-auto">
-      <ArtistSearch />
+      <SearchBar />
     </div>
   );
 };
 
-const ArtistSearch = () => {
+const SearchBar = () => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
@@ -21,7 +21,6 @@ const ArtistSearch = () => {
       navigate(`/search?query=${query}`);
     }
   };
-
   return (
     <form className="flex relative p-3" onSubmit={onSubmit}>
       <input
