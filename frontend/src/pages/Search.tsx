@@ -2,6 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
+import { User } from "../types/User";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+
+type SearchResult = {
+  artists: ArtistSearchResult;
+  users: Array<User>;
+};
 
 type ArtistSearchResult = {
   offset: number;
@@ -12,18 +20,14 @@ type ArtistSearchResult = {
 
 const Search = () => {
   const [searchParams, _] = useSearchParams();
-  const [searchResult, setSearchResult] = useState<ArtistSearchResult | null>(
-    null
-  );
+  const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(true);
   const query = searchParams.get("query");
 
   useEffect(() => {
-    const searchByArtist = async (artistName: string) => {
+    const searchByQuery = async (query: string) => {
       try {
-        const response = await api.get(
-          `search/artists?artistName=${artistName}`
-        );
+        const response = await api.get(`search?query=${query}`);
         setSearchResult(response.data);
       } catch (e) {
         console.log(e);
@@ -32,7 +36,7 @@ const Search = () => {
       }
     };
     if (query) {
-      searchByArtist(query);
+      searchByQuery(query);
     }
   }, []);
 
@@ -43,43 +47,109 @@ const Search = () => {
           Results for: {query}
         </h1>
         {loading ? <p>Loading...</p> : null}
-        <ul className="max-w-2xl mx-auto grid grid-cols-1 place-items-center pt-4 gap-10">
-          {searchResult
-            ? searchResult.artists.map((artist) => (
-                <ArtistListItem key={artist.id} artist={artist} />
-              ))
-            : null}
-        </ul>
+        {searchResult ? (
+          <>
+            <ArtistsList artists={searchResult.artists.artists} />
+            <UsersList users={searchResult.users} />
+          </>
+        ) : null}
       </div>
     </div>
   );
 };
 
-const GenreTag = ({ genre }: { genre: string }) => {
-  return <li className="bg-green-200 px-2 py-1 rounded-md">{genre}</li>;
+const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
+  const [index, setIndex] = useState(0);
+
+  const calculateOffset = () => {
+    if (index / 2 === 1) {
+      return "full";
+    }
+    return `${index}/2`;
+  };
+
+  const decrementOffset = () => {
+    if (index === 0) {
+      return;
+    }
+    setIndex((prev) => prev - 1);
+  };
+
+  const incrementOffset = () => {
+    if (index === artists.length - 2) {
+      return;
+    }
+    setIndex((prev) => prev + 1);
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto pt-4 overflow-x-hidden">
+      <div className="flex items-center">
+        <h2 className="text-2xl font-bold">Artists</h2>
+        <div className="flex gap-6 ml-auto">
+          <FontAwesomeIcon
+            className={index === 0 ? "text-gray-500" : "text-black"}
+            size="xl"
+            icon={faArrowLeft}
+            onClick={decrementOffset}
+          />
+          <FontAwesomeIcon
+            className={
+              index === artists.length - 2 ? "text-gray-500" : "text-black"
+            }
+            size="xl"
+            icon={faArrowRight}
+            onClick={incrementOffset}
+          />
+        </div>
+      </div>
+      <ul className={`flex transition-all -translate-x-${calculateOffset()}`}>
+        {artists.map((artist) => (
+          <ArtistListItem key={artist.id} artist={artist} />
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 const ArtistListItem = ({ artist }: { artist: Artist }) => {
   return (
-    <li className="w-3/4 flex flex-col gap-2 p-4 rounded-md shadow-lg hover:shadow-xl">
+    <li className="min-w-1/2 min-h-48 flex flex-col gap-2 p-4 rounded-md hover:bg-gray-200">
       <Link to={`/artists/${artist.id}`}>
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-4">
           <img
-            width="50px"
-            height="50px"
+            width="100%"
+            height="200px"
             className="rounded-full"
             src={artist.images.length > 0 ? artist.images[0].url : ""}
             alt={artist.name}
           />
-          <span className="text-center font-bold text-xl">{artist.name}</span>
+          <span className="font-bold text-xl">{artist.name}</span>
         </div>
-        <ul className="flex flex-wrap gap-2 py-2">
-          {artist.genres.map((genre) => (
-            <GenreTag key={genre} genre={genre} />
-          ))}
-        </ul>
       </Link>
     </li>
   );
 };
+
+const UsersList = ({ users }: { users: Array<User> }) => {
+  return (
+    <div className="max-w-2xl mx-auto pt-4">
+      <h2 className="text-2xl font-bold">Users</h2>
+      <ul className="flex flex-col">
+        {users.map((user) => (
+          <UserListItem key={user.id} user={user} />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const UserListItem = ({ user }: { user: User }) => {
+  return (
+    <li>
+      {user.firstName} {user.lastName}
+    </li>
+  );
+};
+
 export default Search;
