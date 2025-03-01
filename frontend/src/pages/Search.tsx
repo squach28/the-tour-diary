@@ -49,7 +49,10 @@ const Search = () => {
         {loading ? <p>Loading...</p> : null}
         {searchResult ? (
           <>
-            <ArtistsList artists={searchResult.artists.artists} />
+            <ArtistsList
+              artists={searchResult.artists.artists}
+              query={query as string}
+            />
             <UsersList users={searchResult.users} />
           </>
         ) : null}
@@ -58,7 +61,13 @@ const Search = () => {
   );
 };
 
-const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
+const ArtistsList = ({
+  artists,
+  query,
+}: {
+  artists: Array<Artist>;
+  query: string;
+}) => {
   const [index, setIndex] = useState(0);
 
   const calculateOffset = () => {
@@ -76,7 +85,7 @@ const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
   };
 
   const incrementOffset = () => {
-    if (index === artists.length - 2) {
+    if (index === artists.length - 1) {
       return;
     }
     setIndex((prev) => prev + 1);
@@ -95,7 +104,7 @@ const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
           />
           <FontAwesomeIcon
             className={
-              index === artists.length - 2 ? "text-gray-500" : "text-black"
+              index === artists.length - 1 ? "text-gray-500" : "text-black"
             }
             size="xl"
             icon={faArrowRight}
@@ -107,6 +116,13 @@ const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
         {artists.map((artist) => (
           <ArtistListItem key={artist.id} artist={artist} />
         ))}
+        <li className=" min-w-1/2 min-h-48 flex flex-col items-center p-4 ">
+          <Link to={`/artists?query=${query}`}>
+            <div className="flex justify-center items-center w-[150px] h-[150px] max-w-[150px] max-h-[150px] border rounded-full">
+              <p className="font-bold">See all results</p>
+            </div>
+          </Link>
+        </li>
       </ul>
     </div>
   );
@@ -118,9 +134,9 @@ const ArtistListItem = ({ artist }: { artist: Artist }) => {
       <Link to={`/artists/${artist.id}`}>
         <div className="flex flex-col gap-4">
           <img
-            width="100%"
-            height="200px"
-            className="rounded-full"
+            width="150px"
+            height="150px"
+            className="max-w-[150px] max-h-[150px] rounded-full"
             src={artist.images.length > 0 ? artist.images[0].url : ""}
             alt={artist.name}
           />

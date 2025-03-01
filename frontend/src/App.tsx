@@ -13,6 +13,7 @@ import Search from "./pages/Search";
 import ArtistDetails from "./pages/ArtistDetails";
 import Concerts from "./pages/Concerts";
 import Profile from "./pages/Profile";
+import Artists from "./pages/Artists";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/search" element={<Search />}></Route>
           <Route path="/artists">
+            <Route index={true} element={<Artists />} />
             <Route path=":id" element={<ArtistDetails />}></Route>
             <Route path=":id">
               <Route path="concerts" element={<Concerts />}></Route>
