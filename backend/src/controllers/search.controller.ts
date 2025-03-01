@@ -9,8 +9,12 @@ export const searchByQuery = async (
   res: express.Response
 ) => {
   try {
+    const ARTIST_SEARCH_LIMIT = 5;
     const { query } = req.query;
-    const artists = await searchByArtistName(query as string);
+    const artists = await searchByArtistName(
+      query as string,
+      ARTIST_SEARCH_LIMIT
+    );
     const usersResult = await db.query(userQueries.getUsersByUsername, [query]);
     const users = usersResult.rows.map((user) => {
       return {

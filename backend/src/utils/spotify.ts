@@ -97,11 +97,14 @@ const request = async (
   }
 };
 
-export const searchByArtistName = async (artistName: string) => {
+export const searchByArtistName = async (
+  artistName: string,
+  limit: number = 10
+) => {
   const SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
   try {
     const response = await request(
-      `${SPOTIFY_SEARCH_URL}?q=${artistName}&type=artist`
+      `${SPOTIFY_SEARCH_URL}?q=${artistName}&type=artist&limit=${limit}`
     );
 
     if (!response) {
