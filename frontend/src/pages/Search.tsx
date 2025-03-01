@@ -3,6 +3,8 @@ import { Link, useSearchParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
 import { User } from "../types/User";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 type SearchResult = {
   artists: ArtistSearchResult;
@@ -56,15 +58,52 @@ const Search = () => {
   );
 };
 
-const GenreTag = ({ genre }: { genre: string }) => {
-  return <li className="bg-green-200 px-2 py-1 rounded-md">{genre}</li>;
-};
-
 const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
+  const [index, setIndex] = useState(0);
+
+  const calculateOffset = () => {
+    if (index / 2 === 1) {
+      return "full";
+    }
+    return `${index}/2`;
+  };
+
+  const decrementOffset = () => {
+    if (index === 0) {
+      return;
+    }
+    setIndex((prev) => prev - 1);
+  };
+
+  const incrementOffset = () => {
+    if (index === artists.length - 2) {
+      return;
+    }
+    setIndex((prev) => prev + 1);
+  };
+
   return (
-    <div className="max-w-2xl mx-auto pt-4">
-      <h2 className="text-2xl font-bold">Artists</h2>
-      <ul className="flex overflow-x-hidden">
+    <div className="max-w-2xl mx-auto pt-4 overflow-x-hidden">
+      <div className="flex items-center">
+        <h2 className="text-2xl font-bold">Artists</h2>
+        <div className="flex gap-6 ml-auto">
+          <FontAwesomeIcon
+            className={index === 0 ? "text-gray-500" : "text-black"}
+            size="xl"
+            icon={faArrowLeft}
+            onClick={decrementOffset}
+          />
+          <FontAwesomeIcon
+            className={
+              index === artists.length - 2 ? "text-gray-500" : "text-black"
+            }
+            size="xl"
+            icon={faArrowRight}
+            onClick={incrementOffset}
+          />
+        </div>
+      </div>
+      <ul className={`flex transition-all -translate-x-${calculateOffset()}`}>
         {artists.map((artist) => (
           <ArtistListItem key={artist.id} artist={artist} />
         ))}
