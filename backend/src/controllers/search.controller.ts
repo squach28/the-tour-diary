@@ -12,7 +12,13 @@ export const searchByQuery = async (
     const { query } = req.query;
     const artists = await searchByArtistName(query as string);
     const usersResult = await db.query(userQueries.getUsersByUsername, [query]);
-    const users = usersResult.rows;
+    const users = usersResult.rows.map((user) => {
+      return {
+        id: user.id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+      };
+    });
     res.status(200).json({ artists, users });
     return;
   } catch (e) {
