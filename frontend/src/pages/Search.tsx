@@ -64,7 +64,7 @@ const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
   return (
     <div className="max-w-2xl mx-auto pt-4">
       <h2 className="text-2xl font-bold">Artists</h2>
-      <ul className="flex flex-col">
+      <ul className="flex overflow-x-hidden">
         {artists.map((artist) => (
           <ArtistListItem key={artist.id} artist={artist} />
         ))}
@@ -75,23 +75,18 @@ const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
 
 const ArtistListItem = ({ artist }: { artist: Artist }) => {
   return (
-    <li className="flex flex-col gap-2 p-4 rounded-md shadow-lg hover:shadow-xl">
+    <li className="min-w-1/2 min-h-48 flex flex-col gap-2 p-4 rounded-md hover:bg-gray-200">
       <Link to={`/artists/${artist.id}`}>
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-4">
           <img
-            width="50px"
-            height="50px"
+            width="100%"
+            height="200px"
             className="rounded-full"
             src={artist.images.length > 0 ? artist.images[0].url : ""}
             alt={artist.name}
           />
-          <span className="text-center font-bold text-xl">{artist.name}</span>
+          <span className="font-bold text-xl">{artist.name}</span>
         </div>
-        <ul className="flex flex-wrap gap-2 py-2">
-          {artist.genres.map((genre) => (
-            <GenreTag key={genre} genre={genre} />
-          ))}
-        </ul>
       </Link>
     </li>
   );
