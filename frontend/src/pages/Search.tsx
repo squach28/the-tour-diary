@@ -5,6 +5,7 @@ import { Artist } from "../types/Artist";
 import { User } from "../types/User";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { SearchBar } from "../components/SearchBar";
 
 type SearchResult = {
   artists: ArtistSearchResult;
@@ -19,7 +20,7 @@ type ArtistSearchResult = {
 };
 
 const Search = () => {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(true);
   const query = searchParams.get("query");
@@ -27,6 +28,7 @@ const Search = () => {
   useEffect(() => {
     const searchByQuery = async (query: string) => {
       try {
+        setLoading(true);
         const response = await api.get(`search?query=${query}`);
         setSearchResult(response.data);
       } catch (e) {
@@ -38,11 +40,24 @@ const Search = () => {
     if (query) {
       searchByQuery(query);
     }
-  }, []);
+  }, [searchParams]);
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get("search");
+    setSearchParams((prev) => {
+      return {
+        ...prev,
+        query,
+      };
+    });
+  };
 
   return (
     <div>
       <div className="p-4">
+        <SearchBar onSubmit={onSubmit} value={query as string} />
         <h1 className="text-2xl font-bold text-center mb-4 border-0">
           Results for: {query}
         </h1>
@@ -70,11 +85,8 @@ const ArtistsList = ({
 }) => {
   const [index, setIndex] = useState(0);
 
-  const calculateOffset = () => {
-    if (index / 2 === 1) {
-      return "full";
-    }
-    return `${index}/2`;
+  const calculateOffset = (index: number) => {
+    return `${index * 50}%`;
   };
 
   const decrementOffset = () => {
@@ -112,7 +124,11 @@ const ArtistsList = ({
           />
         </div>
       </div>
-      <ul className={`flex transition-all -translate-x-${calculateOffset()}`}>
+      <ul
+        className={`flex transition-all -translate-x-[${calculateOffset(
+          index
+        )}]`}
+      >
         {artists.map((artist) => (
           <ArtistListItem key={artist.id} artist={artist} />
         ))}
