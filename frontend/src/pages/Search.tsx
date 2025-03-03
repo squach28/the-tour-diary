@@ -62,7 +62,7 @@ const Search = () => {
           Results for: {query}
         </h1>
         {loading ? <p>Loading...</p> : null}
-        {searchResult ? (
+        {searchResult && !loading ? (
           <>
             <ArtistsList
               artists={searchResult.artists.artists}
