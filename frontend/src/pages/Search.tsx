@@ -3,8 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import api from "../api/api";
 import { Artist } from "../types/Artist";
 import { User } from "../types/User";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { SearchBar } from "../components/SearchBar";
 
 type SearchResult = {
   artists: ArtistSearchResult;
@@ -19,7 +18,7 @@ type ArtistSearchResult = {
 };
 
 const Search = () => {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(true);
   const query = searchParams.get("query");
@@ -27,6 +26,7 @@ const Search = () => {
   useEffect(() => {
     const searchByQuery = async (query: string) => {
       try {
+        setLoading(true);
         const response = await api.get(`search?query=${query}`);
         setSearchResult(response.data);
       } catch (e) {
@@ -38,18 +38,34 @@ const Search = () => {
     if (query) {
       searchByQuery(query);
     }
-  }, []);
+  }, [searchParams]);
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get("search");
+    setSearchParams((prev) => {
+      return {
+        ...prev,
+        query,
+      };
+    });
+  };
 
   return (
     <div>
-      <div className="p-4">
+      <div className="p-4 max-w-2xl mx-auto">
+        <SearchBar onSubmit={onSubmit} value={query as string} />
         <h1 className="text-2xl font-bold text-center mb-4 border-0">
           Results for: {query}
         </h1>
         {loading ? <p>Loading...</p> : null}
-        {searchResult ? (
+        {searchResult && !loading ? (
           <>
-            <ArtistsList artists={searchResult.artists.artists} />
+            <ArtistsList
+              artists={searchResult.artists.artists}
+              query={query as string}
+            />
             <UsersList users={searchResult.users} />
           </>
         ) : null}
@@ -58,55 +74,29 @@ const Search = () => {
   );
 };
 
-const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
-  const [index, setIndex] = useState(0);
-
-  const calculateOffset = () => {
-    if (index / 2 === 1) {
-      return "full";
-    }
-    return `${index}/2`;
-  };
-
-  const decrementOffset = () => {
-    if (index === 0) {
-      return;
-    }
-    setIndex((prev) => prev - 1);
-  };
-
-  const incrementOffset = () => {
-    if (index === artists.length - 2) {
-      return;
-    }
-    setIndex((prev) => prev + 1);
-  };
-
+const ArtistsList = ({
+  artists,
+  query,
+}: {
+  artists: Array<Artist>;
+  query: string;
+}) => {
   return (
-    <div className="max-w-2xl mx-auto pt-4 overflow-x-hidden">
+    <div className="max-w-2xl mx-auto pt-4">
       <div className="flex items-center">
         <h2 className="text-2xl font-bold">Artists</h2>
-        <div className="flex gap-6 ml-auto">
-          <FontAwesomeIcon
-            className={index === 0 ? "text-gray-500" : "text-black"}
-            size="xl"
-            icon={faArrowLeft}
-            onClick={decrementOffset}
-          />
-          <FontAwesomeIcon
-            className={
-              index === artists.length - 2 ? "text-gray-500" : "text-black"
-            }
-            size="xl"
-            icon={faArrowRight}
-            onClick={incrementOffset}
-          />
-        </div>
       </div>
-      <ul className={`flex transition-all -translate-x-${calculateOffset()}`}>
+      <ul className={`flex flex-col gap-2`}>
         {artists.map((artist) => (
           <ArtistListItem key={artist.id} artist={artist} />
         ))}
+        <li className="flex flex-col items-center p-4 ">
+          <Link to={`/artists?query=${query}`}>
+            <div className="flex justify-center">
+              <p className="font-bold">See all results</p>
+            </div>
+          </Link>
+        </li>
       </ul>
     </div>
   );
@@ -114,17 +104,29 @@ const ArtistsList = ({ artists }: { artists: Array<Artist> }) => {
 
 const ArtistListItem = ({ artist }: { artist: Artist }) => {
   return (
-    <li className="min-w-1/2 min-h-48 flex flex-col gap-2 p-4 rounded-md hover:bg-gray-200">
+    <li className="flex flex-col gap-2 p-4 rounded-md border border-gray-300 hover:bg-gray-200">
       <Link to={`/artists/${artist.id}`}>
-        <div className="flex flex-col gap-4">
+        <div className="flex gap-4">
           <img
-            width="100%"
-            height="200px"
+            width="25%"
+            height="25%"
             className="rounded-full"
             src={artist.images.length > 0 ? artist.images[0].url : ""}
             alt={artist.name}
           />
-          <span className="font-bold text-xl">{artist.name}</span>
+          <div>
+            <p className="font-bold text-xl">{artist.name}</p>
+            <div className="flex gap-2">
+              {artist.genres.map((genre) => (
+                <span
+                  className="text-xs rounded-sm bg-blue-200 p-2"
+                  key={genre}
+                >
+                  {genre}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </Link>
     </li>
@@ -140,6 +142,7 @@ const UsersList = ({ users }: { users: Array<User> }) => {
           <UserListItem key={user.id} user={user} />
         ))}
       </ul>
+      {users.length === 0 ? <p>No users found</p> : null}
     </div>
   );
 };
