@@ -1,5 +1,9 @@
 import express from "express";
-import { fetchArtistById, fetchArtistTopSongsById } from "../utils/spotify";
+import {
+  fetchArtistById,
+  fetchArtistTopSongsById,
+  searchByArtistName,
+} from "../utils/spotify";
 import { Artist } from "../types/Artist";
 import { db } from "../db/db";
 import { queries as artistQueries } from "../db/queries/artists";
@@ -72,5 +76,23 @@ export const getArtistById = async (
   } catch (e) {
     res.status(500).json({ message: "Something went wrong" });
     return;
+  }
+};
+
+// GET - Artists by Query
+export const getArtistsByQuery = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { query } = req.query;
+    if (query === undefined) {
+      res.status(400).json({ message: "Missing query" });
+      return;
+    }
+    const artists = await searchByArtistName(query as string, 10);
+    res.status(200).json({ artists });
+  } catch (e) {
+    console.log(e);
   }
 };
