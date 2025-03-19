@@ -137,7 +137,7 @@ const UsersList = ({ users }: { users: Array<User> }) => {
   return (
     <div className="max-w-2xl mx-auto pt-4">
       <h2 className="text-2xl font-bold">Users</h2>
-      <ul className="flex flex-col">
+      <ul className="flex flex-col gap-4">
         {users.map((user) => (
           <UserListItem key={user.id} user={user} />
         ))}
@@ -149,8 +149,13 @@ const UsersList = ({ users }: { users: Array<User> }) => {
 
 const UserListItem = ({ user }: { user: User }) => {
   return (
-    <li>
-      {user.firstName} {user.lastName}
+    <li className="flex border border-gray-200 rounded-md hover:bg-gray-200">
+      <Link
+        to={`/profile/${user.id}`}
+        className="w-full p-2 inline-block text-lg"
+      >
+        {user.firstName} {user.lastName}
+      </Link>
     </li>
   );
 };
