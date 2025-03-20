@@ -1,55 +1,61 @@
-import { Link, useNavigate } from "react-router";
+import { Link as RouterLink, useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  Link,
+  Button,
+  Drawer,
+  List,
+  ListItemText,
+  ListItemButton,
+  ListItem,
+  Divider,
+} from "@mui/material";
 
 const Navbar = () => {
   const { isAuthenticated, user } = useAuth();
-  const [showSideNavBar, setShowSideNavBar] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const toggleSideNavBar = () => {
-    setShowSideNavBar((prev) => !prev);
+  const toggleDrawer = () => {
+    setOpen((prev) => !prev);
   };
 
   return (
-    <nav>
-      <ul className="flex p-4 gap-2 bg-green-200">
-        <li className="font-bold">
-          <Link to="/">the tour diary</Link>
-        </li>
-        {isAuthenticated && user ? (
-          <li
-            className="ml-auto hover:cursor-pointer"
-            onClick={toggleSideNavBar}
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Link
+            component={RouterLink}
+            to="/"
+            sx={{ color: "white", textDecoration: "none" }}
           >
-            {user.id.slice(0, 5)}
-          </li>
-        ) : (
-          <li className="ml-auto">
-            <Link to="/auth/login">Log in</Link>
-          </li>
-        )}
-      </ul>
-      {showSideNavBar ? (
-        <div
-          className="fixed h-full inset-0 bg-black opacity-75 transition-all duration-500 z-1"
-          onClick={toggleSideNavBar}
-        ></div>
-      ) : null}
-      <SideNavBar
-        showSideNavBar={showSideNavBar}
-        toggleSideNavBar={toggleSideNavBar}
-      />
-    </nav>
+            <Typography variant="h6" component="div">
+              the tour diary
+            </Typography>
+          </Link>
+          {isAuthenticated && user ? (
+            <Button onClick={toggleDrawer} sx={{ color: "white", ml: "auto" }}>
+              <Typography variant="h6">{user.id.slice(0, 5)}</Typography>
+            </Button>
+          ) : (
+            <Link component={RouterLink} to="/auth/login">
+              Log in
+            </Link>
+          )}
+        </Toolbar>
+      </AppBar>
+      <Drawer open={open} onClose={toggleDrawer} anchor="right">
+        <SideNavBar toggleDrawer={toggleDrawer} />
+      </Drawer>
+    </Box>
   );
 };
 
-const SideNavBar = ({
-  showSideNavBar,
-  toggleSideNavBar,
-}: {
-  showSideNavBar: boolean;
-  toggleSideNavBar: () => void;
-}) => {
+const SideNavBar = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -58,24 +64,33 @@ const SideNavBar = ({
     navigate("/", { replace: true });
   };
   return (
-    <ul
-      className={`min-w-48 w-1/4 max-w-72 h-full fixed flex flex-col top-0 right-0 p-4 bg-white shadow-md z-1 transition-transform duration-300 ${
-        showSideNavBar ? "translate-x-0" : "translate-x-full"
-      } text-center`}
-    >
-      <li>{user ? `Hi, ${user.id.slice(0, 5)}!` : "Loading..."}</li>
-      <li>
-        <Link to="/profile" onClick={toggleSideNavBar}>
-          Profile
-        </Link>
-      </li>
-      <li
-        className="cursor-pointer mt-auto bg-red-500 text-white font-bold rounded-sm px-4 py-2"
-        onClick={handleLogout}
-      >
-        Log out
-      </li>
-    </ul>
+    <Box role="presentation" onClick={toggleDrawer} sx={{ width: 250 }}>
+      <List>
+        <ListItem>
+          <ListItemText>
+            {user ? `Hi, ${user.id.slice(0, 5)}!` : null}
+          </ListItemText>
+        </ListItem>
+        <Divider />
+        <ListItem>
+          <ListItemButton component={RouterLink} to="/profile">
+            Profile
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              fontWeight: "bold",
+              color: "red",
+              borderRadius: "5px",
+            }}
+          >
+            <ListItemText>Log out</ListItemText>
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
   );
 };
 
