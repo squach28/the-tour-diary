@@ -9,6 +9,18 @@ import { Concert } from "../types/Concert";
 import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as filledHeart } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext";
+import {
+  Avatar,
+  Box,
+  Chip,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 const ArtistDetails = () => {
   const params = useParams();
@@ -48,8 +60,8 @@ const ArtistDetails = () => {
     <>
       {loading ? <p>Loading...</p> : null}
       {artistDetails ? (
-        <div className="p-4">
-          <div className="flex justify-between">
+        <Box className="p-4">
+          <Box className="flex justify-between">
             <FontAwesomeIcon
               className="hover:cursor-pointer"
               size="xl"
@@ -60,31 +72,40 @@ const ArtistDetails = () => {
               favorite={artistDetails.favorite}
               artistId={artistDetails.artist.id}
             />
-          </div>
-          <div className="max-w-lg mx-auto">
-            <img
-              className="w-1/2 h-1/2 rounded-full mx-auto p-4"
+          </Box>
+          <Box className="max-w-lg mx-auto">
+            <Avatar
               src={artistDetails.artist.images[0].url}
               alt={artistDetails.artist.name}
+              sx={{
+                width: "150px",
+                height: "150px",
+                marginX: "auto",
+              }}
             />
-            <div className="text-center">
-              <h1 className="text-center text-3xl font-bold">
+            <Box className="text-center">
+              <Typography variant="h3" sx={{ py: 2 }}>
                 {artistDetails.artist.name}
-              </h1>
-              <ul className="w-3/4 flex justify-around gap-2 mx-auto py-2">
+              </Typography>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center", py: 2 }}
+              >
+                <Typography>Genres: </Typography>
                 {artistDetails.artist.genres.map((genre) => (
                   <Genre key={genre} genre={genre} />
                 ))}
-              </ul>
-            </div>
+              </Stack>
+            </Box>
             <TopSongsList tracks={artistDetails.topSongs} />
             <FutureConcerts futureConcerts={artistDetails.futureConcerts} />
             <PastConcerts
               pastConcerts={artistDetails.pastConcerts}
               artistId={artistDetails.artist.id}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       ) : null}
     </>
   );
@@ -141,34 +162,38 @@ const FavoriteIcon = ({
 const TopSongsList = ({ tracks }: { tracks: Array<Track> }) => {
   return (
     <>
-      <h2 className="text-2xl font-bold">Top Songs</h2>
-      <ol className="flex flex-col gap-2 mt-4 list-decimal list-outside">
+      <Typography variant="h5" className="font-bold">
+        Top Songs
+      </Typography>
+      <List>
         {tracks.map((track, rank) => (
-          <TopSongListItem key={track.id} track={track} rank={rank} />
+          <Box key={track.id}>
+            {rank === 0 ? <Divider /> : null}
+            <TopSongListItem track={track} rank={rank} />
+            <Divider />
+          </Box>
         ))}
-      </ol>
+      </List>
     </>
   );
 };
 
 const TopSongListItem = ({ track, rank }: { track: Track; rank: number }) => {
   return (
-    <li className="flex gap-4 items-center p-2 border border-gray-300 shadow-md rounded-md">
-      <p className="text-lg font-bold">{rank + 1}</p>
-      <img
-        width="48"
-        height="48"
-        className="rounded-lg"
+    <ListItem className="flex gap-2 items-center p-2">
+      <Typography variant="h6">{rank + 1}</Typography>
+      <Avatar
+        variant="rounded"
         src={track.album.images[0].url}
         alt={track.album.name}
       />
-      <p>{track.name}</p>
-    </li>
+      <ListItemText primary={track.name}></ListItemText>
+    </ListItem>
   );
 };
 
 const Genre = ({ genre }: { genre: string }) => {
-  return <li className="p-2 shadow-md">{genre}</li>;
+  return <Chip label={genre} />;
 };
 
 const FutureConcerts = ({
@@ -178,15 +203,19 @@ const FutureConcerts = ({
 }) => {
   return (
     <>
-      <h2 className="text-2xl font-bold py-2">Future Concerts</h2>
+      <Typography variant="h5" className="font-bold py-2">
+        Future Concerts
+      </Typography>
       {futureConcerts.length > 0 ? (
-        <>
-          <ul className="flex flex-nowrap gap-8 overflow-x-scroll md:flex-col md:overflow-x-hidden">
-            {futureConcerts.map((concert) => (
+        <List>
+          {futureConcerts.map((concert, index) => (
+            <Box key={concert.id}>
+              {index === 0 ? <Divider /> : null}
               <ConcertListElement key={concert.id} concert={concert} />
-            ))}
-          </ul>
-        </>
+              <Divider />
+            </Box>
+          ))}
+        </List>
       ) : (
         <p>No upcoming concerts</p>
       )}
@@ -203,14 +232,18 @@ const PastConcerts = ({
 }) => {
   return (
     <>
-      <h2 className="text-2xl font-bold py-2">Past Concerts</h2>
+      <Typography variant="h5">Past Concerts</Typography>
       {pastConcerts.length > 0 ? (
         <>
-          <ul className="flex flex-nowrap gap-8 overflow-x-scroll snap-x md:flex-col md:overflow-x-hidden">
-            {pastConcerts.map((concert) => (
-              <ConcertListElement key={concert.id} concert={concert} />
+          <List>
+            {pastConcerts.map((concert, index) => (
+              <>
+                {index === 0 ? <Divider /> : null}
+                <ConcertListElement key={concert.id} concert={concert} />
+                <Divider />
+              </>
             ))}
-          </ul>
+          </List>
           <Link to={`/artists/${artistId}/concerts`}>See all concerts</Link>
         </>
       ) : (
@@ -221,21 +254,44 @@ const PastConcerts = ({
 };
 
 const ConcertListElement = ({ concert }: { concert: Concert }) => {
-  const formatDate = (date: string) => {
-    const [day, month, year] = date.split("-");
-    const formattedDate = new Date(Number(year), Number(month), Number(day));
-    return formattedDate.toLocaleDateString("en-US");
-  };
-  return (
-    <li className="flex flex-col justify-center items-center gap-2 min-w-1/2 min-h-36 shadow-md p-2 text-center my-4 snap-center md:border md:border-gray-200">
-      <div>
-        <span>{concert.venue.city.name}, </span>
-        <span>{concert.venue.city.country.name}</span>
-      </div>
-      <p>{concert.venue.name}</p>
+  const [day, month, year] = concert.eventDate.split("-");
+  const formattedDate = new Date(Number(year), Number(month), Number(day));
 
-      <p>{formatDate(concert.eventDate)}</p>
-    </li>
+  const getConcertMonth = () => {
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+    };
+    return formattedDate.toLocaleDateString("en-US", options);
+  };
+
+  const getConcertDay = () => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+    };
+    return formattedDate.toLocaleDateString("en-US", options);
+  };
+
+  const getVenueLocation = () => {
+    return concert.venue.city.name + " " + concert.venue.city.country.name;
+  };
+
+  return (
+    <ListItemButton
+      component={Link}
+      to={`/concerts/${concert.id}`}
+      alignItems="flex-start"
+    >
+      <Stack spacing={1} sx={{ px: 2 }}>
+        <Typography variant="h6">{getConcertMonth()}</Typography>
+        <Typography variant="h6">{getConcertDay()}</Typography>
+      </Stack>
+      <Divider orientation="vertical" />
+      <ListItemText
+        primary={getVenueLocation()}
+        secondary={concert.venue.name}
+        sx={{ m: 0 }}
+      ></ListItemText>
+    </ListItemButton>
   );
 };
 
