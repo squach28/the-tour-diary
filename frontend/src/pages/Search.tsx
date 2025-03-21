@@ -4,6 +4,16 @@ import api from "../api/api";
 import { Artist } from "../types/Artist";
 import { User } from "../types/User";
 import { SearchBar } from "../components/SearchBar";
+import {
+  Avatar,
+  Box,
+  Divider,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 
 type SearchResult = {
   artists: ArtistSearchResult;
@@ -53,24 +63,22 @@ const Search = () => {
   };
 
   return (
-    <div>
-      <div className="p-4 max-w-2xl mx-auto">
-        <SearchBar onSubmit={onSubmit} value={query as string} />
-        <h1 className="text-2xl font-bold text-center mb-4 border-0">
-          Results for: {query}
-        </h1>
-        {loading ? <p>Loading...</p> : null}
-        {searchResult && !loading ? (
-          <>
-            <ArtistsList
-              artists={searchResult.artists.artists}
-              query={query as string}
-            />
-            <UsersList users={searchResult.users} />
-          </>
-        ) : null}
-      </div>
-    </div>
+    <Box className="max-w-2xl mx-auto px-4 pb-2">
+      <SearchBar onSubmit={onSubmit} value={query as string} />
+      <Typography variant="h5" sx={{ mt: 2 }}>
+        Results for: {query}
+      </Typography>
+      {loading ? <Typography>Loading...</Typography> : null}
+      {searchResult && !loading ? (
+        <>
+          <ArtistsList
+            artists={searchResult.artists.artists}
+            query={query as string}
+          />
+          <UsersList users={searchResult.users} />
+        </>
+      ) : null}
+    </Box>
   );
 };
 
@@ -82,81 +90,73 @@ const ArtistsList = ({
   query: string;
 }) => {
   return (
-    <div className="max-w-2xl mx-auto pt-4">
-      <div className="flex items-center">
-        <h2 className="text-2xl font-bold">Artists</h2>
-      </div>
-      <ul className={`flex flex-col gap-2`}>
-        {artists.map((artist) => (
-          <ArtistListItem key={artist.id} artist={artist} />
+    <Box className="max-w-2xl mx-auto pt-4">
+      <Typography variant="h4">Artists</Typography>
+      <List>
+        {artists.map((artist, index) => (
+          <>
+            {index === 0 ? null : <Divider />}
+            <ArtistListItem key={artist.id} artist={artist} />
+            {index === artists.length - 1 ? null : <Divider />}
+          </>
         ))}
-        <li className="flex flex-col items-center p-4 ">
-          <Link to={`/artists?query=${query}`}>
-            <div className="flex justify-center">
-              <p className="font-bold">See all results</p>
-            </div>
-          </Link>
-        </li>
-      </ul>
-    </div>
+        <ListItemButton
+          component={Link}
+          to={`/artists?query=${query}`}
+          className="flex flex-col items-center p-4 "
+        >
+          <ListItemText>
+            <Typography variant="button">See all results</Typography>
+          </ListItemText>
+        </ListItemButton>
+      </List>
+    </Box>
   );
 };
 
 const ArtistListItem = ({ artist }: { artist: Artist }) => {
   return (
-    <li className="flex flex-col gap-2 p-4 rounded-md border border-gray-300 hover:bg-gray-200">
-      <Link to={`/artists/${artist.id}`}>
-        <div className="flex gap-4">
-          <img
-            width="25%"
-            height="25%"
-            className="rounded-full"
-            src={artist.images.length > 0 ? artist.images[0].url : ""}
-            alt={artist.name}
-          />
-          <div>
-            <p className="font-bold text-xl">{artist.name}</p>
-            <div className="flex gap-2">
-              {artist.genres.map((genre) => (
-                <span
-                  className="text-xs rounded-sm bg-blue-200 p-2"
-                  key={genre}
-                >
-                  {genre}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Link>
-    </li>
+    <ListItemButton
+      component={Link}
+      to={`/artists/${artist.id}`}
+      alignItems="flex-start"
+    >
+      <ListItemAvatar>
+        <Avatar
+          src={artist.images.length > 0 ? artist.images[0].url : ""}
+          alt={artist.name}
+        />
+      </ListItemAvatar>
+      <ListItemText
+        primary={<Typography variant="h6">{artist.name}</Typography>}
+      ></ListItemText>
+    </ListItemButton>
   );
 };
 
 const UsersList = ({ users }: { users: Array<User> }) => {
   return (
-    <div className="max-w-2xl mx-auto pt-4">
-      <h2 className="text-2xl font-bold">Users</h2>
-      <ul className="flex flex-col gap-4">
-        {users.map((user) => (
-          <UserListItem key={user.id} user={user} />
+    <Box className="max-w-2xl mx-auto pt-4">
+      <Typography variant="h4">Users</Typography>
+      <List>
+        {users.map((user, index) => (
+          <>
+            {index === 0 ? null : <Divider />}
+            <UserListItem key={user.id} user={user} />
+            {index === users.length - 1 ? null : <Divider />}
+          </>
         ))}
-      </ul>
-      {users.length === 0 ? <p>No users found</p> : null}
-    </div>
+      </List>
+      {users.length === 0 ? <Typography>No users found</Typography> : null}
+    </Box>
   );
 };
 
 const UserListItem = ({ user }: { user: User }) => {
   return (
-    <li className="flex border border-gray-200 rounded-md hover:bg-gray-200">
-      <Link
-        to={`/profile/${user.id}`}
-        className="w-full p-2 inline-block text-lg"
-      >
-        {user.firstName} {user.lastName}
-      </Link>
-    </li>
+    <ListItemButton component={Link} to={`/profile/${user.id}`}>
+      <ListItemText>{user.firstName + " " + user.lastName}</ListItemText>
+    </ListItemButton>
   );
 };
 
